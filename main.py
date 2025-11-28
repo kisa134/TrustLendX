@@ -27,5 +27,9 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     logging.getLogger(__name__).info("Запуск приложения TrustLendX")
     
+    # Получаем порт из переменных окружения (для деплоя на облачных платформах)
+    port = int(os.environ.get("PORT", 5000))
+    debug = os.environ.get("FLASK_DEBUG", "0") == "1"
+    
     # Запускаем приложение
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=port, debug=debug)
