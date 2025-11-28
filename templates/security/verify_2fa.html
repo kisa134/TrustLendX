@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Проверка двухфакторной аутентификации{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Проверка двухфакторной аутентификации</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                        <h5 class="mb-2">Требуется дополнительная проверка</h5>
+                        <p class="text-muted">
+                            Ваш аккаунт защищен двухфакторной аутентификацией.<br>
+                            Пожалуйста, введите код из вашего приложения аутентификатора.
+                        </p>
+                    </div>
+                    
+                    <form method="post" action="{{ url_for('verify_2fa') }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.otp_code.label(class="form-label") }}
+                            {{ form.otp_code(class="form-control form-control-lg text-center" + (" is-invalid" if form.otp_code.errors else ""), placeholder="Введите 6-значный код", autofocus=true) }}
+                            {% if form.otp_code.errors %}
+                                {% for error in form.otp_code.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                    
+                    <div class="text-center mt-4">
+                        <p class="small text-muted">Потеряли доступ к устройству?</p>
+                        <a href="{{ url_for('reset_2fa') }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-key me-1"></i> Сбросить 2FA
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <a href="{{ url_for('login') }}" class="text-decoration-none">
+                    <i class="fas fa-arrow-left me-1"></i> Вернуться к входу в систему
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+<!-- Floating Telegram support button -->
+<div class="support-chat-button">
+  <a href="https://t.me/TrustLendX_Admin" target="_blank" class="btn btn-primary rounded-circle shadow-lg" 
+     data-bs-toggle="tooltip" data-bs-placement="left" title="Поддержка в Telegram">
+    <i class="fab fa-telegram fa-lg"></i>
+  </a>
+</div>
+
+<!-- Custom styles for support button -->
+<style>
+.support-chat-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1030;
+}
+
+.support-chat-button .btn {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.support-chat-button .btn:hover {
+  transform: scale(1.1);
+}
+
+@media (max-width: 767.98px) {
+  .support-chat-button {
+    bottom: 15px;
+    right: 15px;
+  }
+  
+  .support-chat-button .btn {
+    width: 50px;
+    height: 50px;
+  }
+}
+</style>
+
+<!-- Initialize tooltips -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+});
+</script>

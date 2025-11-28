@@ -1,0 +1,196 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Уведомления системы{% endblock admin_content %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    .notification-card {
+        margin-bottom: 15px;
+        border-left: 5px solid #ccc;
+    }
+    
+    .notification-card.unread {
+        border-left-color: #0d6efd;
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+    
+    .notification-card.payment {
+        border-left-color: #198754;
+    }
+    
+    .notification-card.warning {
+        border-left-color: #ffc107;
+    }
+    
+    .notification-card.error {
+        border-left-color: #dc3545;
+    }
+    
+    .notification-controls {
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .notification-actions {
+        padding-top: 15px;
+        padding-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .notification-content {
+        font-size: 14px;
+        white-space: pre-line;
+    }
+    
+    .notification-meta {
+        font-size: 12px;
+        color: #6c757d;
+    }
+    
+    .notification-badge {
+        font-size: 0.8em;
+        border-radius: 20px;
+        padding: 0.35em 0.8em;
+    }
+    
+    .notification-title {
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        color: #6c757d;
+    }
+    
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: #adb5bd;
+    }
+</style>
+{% endblock admin_content %}
+
+{% block admin_content %}
+<div class="container mt-4">
+    <h2>Уведомления системы</h2>
+    
+    {% if unread_count %}
+    <div class="alert alert-info">
+        У вас {{ unread_count }} непрочитанных уведомлений
+    </div>
+    {% endif %}
+    
+    <div class="notification-actions">
+        <div>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Назад
+            </a>
+        </div>
+        <div>
+            {% if notifications %}
+            <form method="POST" action="{{ url_for('admin_mark_all_notifications_read') }}" class="d-inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="bi bi-check-all"></i> Отметить все как прочитанные
+                </button>
+            </form>
+            <form method="POST" action="{{ url_for('admin_delete_read_notifications') }}" class="d-inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-outline-danger">
+                    <i class="bi bi-trash"></i> Удалить прочитанные
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="row mt-3">
+        {% if notifications %}
+            {% for notification in notifications %}
+            <div class="col-12">
+                <div class="card notification-card {% if not notification.is_read %}unread{% endif %} {{ notification.notification_type }}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="notification-title">
+                                {{ notification.title }}
+                                {% if notification.notification_type == 'payment' %}
+                                <span class="badge bg-success notification-badge">Платёж</span>
+                                {% elif notification.notification_type == 'warning' %}
+                                <span class="badge bg-warning text-dark notification-badge">Предупреждение</span>
+                                {% elif notification.notification_type == 'error' %}
+                                <span class="badge bg-danger notification-badge">Ошибка</span>
+                                {% else %}
+                                <span class="badge bg-info notification-badge">Информация</span>
+                                {% endif %}
+                                
+                                {% if not notification.is_read %}
+                                <span class="badge bg-primary notification-badge">Новое</span>
+                                {% endif %}
+                            </h5>
+                            <div class="notification-meta text-end">
+                                <div>{{ notification.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
+                                {% if notification.is_read %}
+                                <div><i class="bi bi-check-all"></i> Прочитано</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="notification-content">{{ notification.message }}</div>
+                        
+                        {% if notification.related_user_id %}
+                        <div class="notification-meta mt-2">
+                            <i class="bi bi-person"></i> Пользователь: 
+                            <a href="{{ url_for('admin_user_details', user_id=notification.related_user_id) }}">
+                                {{ user_dict[notification.related_user_id]['username'] }} 
+                                ({{ user_dict[notification.related_user_id]['email'] }})
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        {% if notification.related_transaction_id %}
+                        <div class="notification-meta">
+                            <i class="bi bi-currency-exchange"></i> Транзакция: 
+                            {% if notification.transaction_type == 'ton' %}
+                            <a href="{{ url_for('admin_ton_transactions') }}">Транзакция TON #{{ notification.related_transaction_id }}</a>
+                            {% else %}
+                            <a href="{{ url_for('admin_transaction_details', transaction_id=notification.related_transaction_id) }}">Транзакция #{{ notification.related_transaction_id }}</a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        
+                        {% if not notification.is_read %}
+                        <div class="mt-3">
+                            <form method="POST" action="{{ url_for('admin_mark_notification_read', notification_id=notification.id) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-check"></i> Отметить как прочитанное
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="bi bi-bell"></i>
+                    </div>
+                    <h3>Уведомлений нет</h3>
+                    <p>На данный момент у вас нет системных уведомлений</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock admin_content %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock admin_content %}

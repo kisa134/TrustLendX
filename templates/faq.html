@@ -1,0 +1,457 @@
+{% extends "base.html" %}
+
+{% block title %}Вопросы и ответы{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold">Вопросы и ответы</h1>
+        <p class="lead text-muted">Информация о платформе, инвестициях и полезные материалы</p>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Вкладки для переключения между разделами -->
+            <ul class="nav nav-tabs nav-justified mb-4" id="faqTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="recommended-tab" data-bs-toggle="tab" data-bs-target="#recommended" type="button" role="tab" aria-controls="recommended" aria-selected="true">
+                        <i class="fas fa-bookmark me-2"></i>Рекомендуется к прочтению
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="faq-tab" data-bs-toggle="tab" data-bs-target="#faq" type="button" role="tab" aria-controls="faq" aria-selected="false">
+                        <i class="fas fa-question-circle me-2"></i>Часто задаваемые вопросы
+                    </button>
+                </li>
+            </ul>
+            
+            <!-- Содержимое вкладок -->
+            <div class="tab-content" id="faqTabsContent">
+                <!-- Раздел "Рекомендуется к прочтению" -->
+                <div class="tab-pane fade show active" id="recommended" role="tabpanel" aria-labelledby="recommended-tab">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h2 class="fs-4 mb-4">Рациональный подход к инвестициям: зачем стоит диверсифицироваться через платформы ликвидности для трейдеров?</h2>
+                            
+                            <div class="mb-4">
+                                <p class="lead">На криптовалютном рынке большинство частных инвесторов сталкиваются с одной и той же проблемой: получением убытков вместо прогнозируемой прибыли! Попытки самостоятельно торговать, ориентируясь на сигналы из соцсетей или случайные идеи, нередко приводят к убыткам.</p>
+                                
+                                <p>Именно поэтому всё больше инвесторов обращают внимание на альтернативные способы участия в рынке, не связанные с прямой торговлей. Один из таких подходов - предоставление ликвидности профессиональным трейдерам через специализированные инвестиционные платформы.</p>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <div class="mb-4">
+                                <h3 class="fs-5 mb-3">Почему самостоятельная торговля - не всегда лучший выбор</h3>
+                                <p>Несмотря на доступность торговых инструментов и кажущуюся простоту, рынок требует глубоких знаний, дисциплины и опыта.</p>
+                                
+                                <p class="fw-bold mt-3 mb-2">Проблемы, с которыми сталкиваются частные инвесторы:</p>
+                                <ul class="list-group list-group-flush mb-3">
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-minus text-danger me-2"></i>Эмоциональные решения и отсутствие стратегии</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-minus text-danger me-2"></i>Завышенные ожидания и игра "в короткую"</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-minus text-danger me-2"></i>Пренебрежение управлением рисками</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-minus text-danger me-2"></i>Отсутствие диверсификации</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-minus text-danger me-2"></i>Потери капитала на волатильных движениях</li>
+                                </ul>
+                                
+                                <p>Фактически, для многих это превращается в спекулятивную игру с низкой вероятностью системного успеха, ближе к казино, чем к инвестициям.</p>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <div class="mb-4">
+                                <h3 class="fs-5 mb-3">Альтернатива: инвестиционные платформы с моделью P2P-ликвидности</h3>
+                                <p>Современные криптоинвестиционные платформы предлагают иной подход: вы не торгуете самостоятельно, а предоставляете ликвидность проверенным профессионалам. Эти трейдеры берут ликвидность под залог своих активов.</p>
+                                
+                                <p class="fw-bold mt-3 mb-2">Преимущества такого подхода:</p>
+                                <ul class="list-group list-group-flush mb-3">
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-check text-success me-2"></i>Пассивный доход - без необходимости вникать в торговлю</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-check text-success me-2"></i>Предсказуемость - фиксированная и прогнозируемая доходность 5% в месяц</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-check text-success me-2"></i>Доступность - вход от сравнительно небольших сумм</li>
+                                </ul>
+                                
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i><strong>Важно:</strong> речь не идёт о доверительном управлении или высокорискованных схемах. Это регулируемый механизм, где ваш капитал работает как ликвидность - инструмент, необходимый трейдерам для эффективной торговли.
+                                </div>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <div class="mb-4">
+                                <h3 class="fs-5 mb-3">Диверсификация через платформу - это снижение нагрузки и повышение эффективности</h3>
+                                <p>Такой формат инвестирования позволяет перераспределить часть средств из высокорисковых направлений в более стабильный источник дохода, не жертвуя потенциальной доходностью. Это особенно актуально для тех, кто уже пробовал торговать самостоятельно, получил опыт и понимает реальность рисков.</p>
+                                
+                                <p class="fw-bold mt-3 mb-2">Инвесторы получают:</p>
+                                <ul class="list-group list-group-flush mb-3">
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-check text-success me-2"></i>стабильный процент</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-check text-success me-2"></i>понятную структуру работы</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-check text-success me-2"></i>минимальное вовлечение в процесс</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-check text-success me-2"></i>снижение волатильности портфеля за счёт регулярных поступлений дохода</li>
+                                </ul>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <div class="mb-4">
+                                <h3 class="fs-5 mb-3">Заключение</h3>
+                                <p>Современный рынок предоставляет множество возможностей. Но главная задача инвестора - не гнаться за "быстрыми" деньгами, а системно управлять своим капиталом.</p>
+                                
+                                <p>Инвестиционная платформа, которая предоставляет ликвидность профессиональным трейдерам, - это возможность участвовать в рынке разумно: с контролем рисков, понятной доходностью и минимальной вовлечённостью. Такой подход позволяет сохранить и приумножить капитал даже в периоды повышенной волатильности.</p>
+                                
+                                <p>Инвестировать можно по-разному. Но в условиях неопределённости и повышенных рыночных рисков выигрывает тот, кто выбирает структурированные, диверсифицированные решения, а не импульсивную торговлю.</p>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <div class="mb-4">
+                                <h3 class="fs-5 mb-3">Сложный процент против мечты об альтсезоне: как здравый расчёт обгоняет азарт и ожидания</h3>
+                                <p>На криптовалютном рынке по-прежнему доминирует спекулятивный настрой. Многие частные инвесторы, особенно начинающие, продолжают ждать "альтсезона", «иксов» и очередной волны хайпа, способной в одночасье приумножить депозит в несколько раз. Но реальность оказывается куда более суровой.</p>
+                                
+                                <p>На этом фоне пассивные инвестиционные стратегии со стабильной доходностью и сложным процентом выглядят всё более рационально. Особенно в долгосрочной перспективе.</p>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <div class="mb-4">
+                                <h3 class="fs-5 mb-3">Что такое сложный процент и в чём его сила?</h3>
+                                <p>Сложный процент — это принцип, при котором полученный доход не выводится, а реинвестируется, увеличивая базу для следующего начисления прибыли. В отличие от простой прибыли, которая остаётся постоянной, сложный процент работает экспоненциально — рост ускоряется со временем.</p>
+                                
+                                <div class="bg-light p-3 border rounded">
+                                    <p class="fw-bold mb-2">Формула проста:</p>
+                                    <code>FV = PV × (1 + r)^n</code>
+                                    <p class="mt-2 mb-0">Где:</p>
+                                    <ul class="mb-0">
+                                        <li><strong>FV</strong> - будущая сумма</li>
+                                        <li><strong>PV</strong> - изначальный вклад</li>
+                                        <li><strong>r</strong> - ставка за период</li>
+                                        <li><strong>n</strong> - количество периодов</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <div class="mb-4">
+                                <h3 class="fs-5 mb-3">Пример: $10,000 под 5% в месяц - реальная сила спокойного роста</h3>
+                                <p>Возьмём консервативный, но устойчивый сценарий:</p>
+                                <p>Инвестор размещает $10,000 под 5% в месяц, с ежемесячным реинвестированием. Срок - 2,5 года (30 месяцев).</p>
+                                
+                                <div class="alert alert-success">
+                                    <p class="mb-1"><i class="fas fa-chart-line me-2"></i><strong>Результат:</strong></p>
+                                    <p class="mb-0"><code>FV = 10,000 × (1 + 0.05)^30 ≈ $43,219</code></p>
+                                </div>
+                                
+                                <p>Рост более чем в 4 раза. Без торговли, без угадывания трендов, без плечей и ликвидаций. При этом инвестиция сохраняет капитал, не требует ежедневного вовлечения и практически исключает эмоциональное давление.</p>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <div class="mb-4">
+                                <h3 class="fs-5 mb-3">Теперь сравним с "ожиданием альтсезона»</h3>
+                                <p>Многие инвесторы с 2022 года «ждали рынок»:</p>
+                                <ul class="list-group list-group-flush mb-3">
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-minus text-danger me-2"></i>кто-то сидел в альтах, надеясь на 10-20x</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-minus text-danger me-2"></i>кто-то заходил по фому на пиках и «усреднялся» вниз</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-minus text-danger me-2"></i>кто-то торговал с плечом и терял депозит частично или полностью</li>
+                                </ul>
+                                
+                                <p>Сейчас, спустя 2,5 года, большинство из них имеют либо убыток, либо нулевой результат. Причина - отсутствие системной стратегии и переоценка краткосрочных движений.</p>
+                                
+                                <p>При этом параллельно работали платформы, обеспечивавшие стабильную доходность 5% в месяц через предоставление ликвидности профессиональным трейдерам. Инвесторы, выбравшие такой путь, сегодня имеют капитал, который не просто сохранён, а стабильно вырос.</p>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <div class="mb-4">
+                                <h3 class="fs-5 mb-3">Что на практике даёт стратегия с фиксированной доходностью и сложным процентом</h3>
+                                <ul class="list-group list-group-flush mb-3">
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-check text-success me-2"></i><strong>Предсказуемость:</strong> можно планировать рост капитала, зная условия.</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-check text-success me-2"></i><strong>Снижение вовлечённости:</strong> нет необходимости анализировать рынок ежедневно.</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-check text-success me-2"></i><strong>Защита нервов:</strong> исключаются просадки в 70–90%, которые случаются на спотовых и маржинальных рынках.</li>
+                                    <li class="list-group-item bg-transparent"><i class="fas fa-check text-success me-2"></i><strong>Свобода от эмоционального фона рынка:</strong> не важен курс BTC или тренд по ETH - капитал работает.</li>
+                                </ul>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <div>
+                                <h3 class="fs-5 mb-3">Заключение</h3>
+                                <p>Сложный процент - это не просто инструмент роста, это альтернатива хаосу, в котором часто находятся частные инвесторы, гоняясь за «иксами». Да, быстрые прибыли возможны. Но в реальности выигрывают не те, кто делает ставку на удачу, а те, кто выбирает системный подход, позволяющий капиталу расти при любой конъюнктуре рынка.</p>
+                                
+                                <p>Пока одни ждут следующую волну альтсезона, другие уже прошли свой путь в 4x - спокойно, стабильно и без лишней суеты. Вопрос не в том, как быстро удвоиться. Вопрос как не потерять и при этом вырасти уверенно.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Раздел "Часто задаваемые вопросы" -->
+                <div class="tab-pane fade" id="faq" role="tabpanel" aria-labelledby="faq-tab">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h2 class="fs-4 mb-4 text-center">Часто задаваемые вопросы</h2>
+
+                            <div class="accordion accordion-flush" id="faqAccordion">
+                                <!-- Общие вопросы по платформе -->
+                                <div class="accordion-item border-0 mb-3">
+                                    <h2 class="accordion-header" id="headingOne">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                            <span class="fw-bold">Что такое TrustLendX?</span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>TrustLendX — это платформа для инвестирования и кредитования, которая объединяет инвесторов и профессиональных трейдеров. Наша миссия — создать надежную экосистему для взаимовыгодного сотрудничества: инвесторы получают стабильный пассивный доход, а трейдеры — дополнительный капитал под залог существующих активов.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3">
+                                    <h2 class="accordion-header" id="headingTwo">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                            <span class="fw-bold">Как работает платформа?</span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>Механизм работы платформы прост:</p>
+                                            <ol>
+                                                <li>Инвесторы размещают свои средства на определенный срок под фиксированный процент.</li>
+                                                <li>Платформа распределяет эти средства между проверенными профессиональными трейдерами, которые предоставляют залог в виде своих активов.</li>
+                                                <li>Трейдеры используют полученный капитал для увеличения объема своих торговых операций.</li>
+                                                <li>По окончании срока инвестирования средства возвращаются инвестору вместе с прибылью.</li>
+                                            </ol>
+                                            <p>Вся система работает на смарт-контрактах и имеет многоуровневую защиту.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3">
+                                    <h2 class="accordion-header" id="headingThree">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                            <span class="fw-bold">Чем TrustLendX отличается от других платформ?</span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>Наши ключевые отличия:</p>
+                                            <ul>
+                                                <li><strong>Фиксированная доходность</strong> — предсказуемый процент независимо от рыночных колебаний.</li>
+                                                <li><strong>Обеспеченность инвестиций</strong> — каждая инвестиция защищена залогом трейдера, стоимость которого выше получаемой суммы.</li>
+                                                <li><strong>Прозрачность</strong> — все операции фиксируются в блокчейне и доступны для проверки.</li>
+                                                <li><strong>Строгий отбор трейдеров</strong> — работаем только с профессионалами, имеющими подтвержденный опыт и положительную историю.</li>
+                                                <li><strong>Легкость использования</strong> — понятный интерфейс и минимум действий для начала инвестирования.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Вопросы по инвестированию -->
+                                <div class="accordion-item border-0 mb-3">
+                                    <h2 class="accordion-header" id="headingFour">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                            <span class="fw-bold">Какая минимальная сумма инвестиции?</span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>Минимальная сумма для инвестирования составляет 100 USDT. Мы считаем важным сделать инвестирование доступным для широкого круга пользователей.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3">
+                                    <h2 class="accordion-header" id="headingFive">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                            <span class="fw-bold">Какая доходность на платформе?</span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>Базовая доходность составляет 5% в месяц или 60% годовых. Доходность может варьироваться в зависимости от выбранного срока инвестирования и общей суммы вложений.</p>
+                                            <p>При реинвестировании (использовании сложного процента) итоговая доходность может быть существенно выше. Например, при реинвестировании на протяжении 12 месяцев, фактическая годовая доходность составит около 80%.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3">
+                                    <h2 class="accordion-header" id="headingSix">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                            <span class="fw-bold">Какие есть риски?</span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>Как и любые инвестиции, наша платформа не свободна от рисков. Однако мы внедрили многоуровневую систему безопасности для их минимизации:</p>
+                                            <ul>
+                                                <li><strong>Залоговое обеспечение</strong> — каждый трейдер вносит залог, стоимость которого превышает получаемую в кредит сумму.</li>
+                                                <li><strong>Страховой фонд</strong> — часть прибыли платформы направляется в страховой фонд для компенсации возможных потерь.</li>
+                                                <li><strong>Диверсификация</strong> — средства инвесторов распределяются между несколькими трейдерами для снижения зависимости от одного кредитополучателя.</li>
+                                                <li><strong>Регулярный аудит</strong> — мы постоянно контролируем деятельность трейдеров и оцениваем их риск-профиль.</li>
+                                            </ul>
+                                            <p>Важно понимать, что, несмотря на все меры безопасности, определенный риск всегда присутствует в инвестициях.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Технические вопросы -->
+                                <div class="accordion-item border-0 mb-3">
+                                    <h2 class="accordion-header" id="headingSeven">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                                            <span class="fw-bold">Какие криптовалюты я могу использовать для инвестирования?</span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseSeven" class="accordion-collapse collapse" aria-labelledby="headingSeven" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>В настоящее время на платформе принимается только USDT (TON).</p>
+                                            <p>Все расчеты внутри платформы производятся в USDT для обеспечения стабильности и предсказуемости доходности.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3">
+                                    <h2 class="accordion-header" id="headingEight">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
+                                            <span class="fw-bold">Как вывести средства?</span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseEight" class="accordion-collapse collapse" aria-labelledby="headingEight" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>Вывод средств доступен по окончании срока инвестирования. Процесс вывода:</p>
+                                            <ol>
+                                                <li>Перейдите в раздел "Мои инвестиции" личного кабинета.</li>
+                                                <li>Выберите инвестицию, срок которой истек.</li>
+                                                <li>Нажмите на кнопку "Вывести средства".</li>
+                                                <li>Укажите адрес вашего криптокошелька для получения средств.</li>
+                                                <li>Подтвердите операцию.</li>
+                                            </ol>
+                                            <p>Средства будут переведены на указанный адрес в течение 24 часов. Обычно процесс занимает не более 1-2 часов.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3">
+                                    <h2 class="accordion-header" id="headingNine">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNine" aria-expanded="false" aria-controls="collapseNine">
+                                            <span class="fw-bold">Можно ли вывести средства досрочно?</span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseNine" class="accordion-collapse collapse" aria-labelledby="headingNine" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>Да, на нашей платформе предусмотрена возможность досрочного вывода средств, но с определенными условиями:</p>
+                                            <ul>
+                                                <li>При досрочном выводе комиссия составляет 10% от суммы инвестиции.</li>
+                                                <li>Начисленные, но еще не выплаченные проценты при досрочном выводе не выплачиваются.</li>
+                                            </ul>
+                                            <p>Досрочный вывод средств доступен через обращение в службу поддержки. Для крупных инвесторов (с суммой инвестиций от 10,000 USDT) могут быть предложены индивидуальные условия досрочного вывода.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Безопасность -->
+                                <div class="accordion-item border-0 mb-3">
+                                    <h2 class="accordion-header" id="headingTen">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTen" aria-expanded="false" aria-controls="collapseTen">
+                                            <span class="fw-bold">Как защищены мои инвестиции?</span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseTen" class="accordion-collapse collapse" aria-labelledby="headingTen" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>Безопасность инвестиций обеспечивается несколькими уровнями защиты:</p>
+                                            <ol>
+                                                <li><strong>Обеспечение залогом</strong> — трейдеры предоставляют залог, стоимость которого превышает получаемую сумму.</li>
+                                                <li><strong>Автоматическая ликвидация</strong> — если стоимость залога падает ниже определенного порога, система автоматически закрывает позицию трейдера для защиты инвестиций.</li>
+                                                <li><strong>Страховой фонд</strong> — часть прибыли платформы направляется на формирование страхового фонда для покрытия возможных убытков.</li>
+                                                <li><strong>Многоуровневая проверка трейдеров</strong> — мы работаем только с проверенными трейдерами, имеющими подтвержденный опыт и положительную историю.</li>
+                                                <li><strong>Регулярный аудит</strong> — внутренний аудит всех операций и внешний аудит системы безопасности.</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item border-0 mb-3">
+                                    <h2 class="accordion-header" id="headingEleven">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEleven" aria-expanded="false" aria-controls="collapseEleven">
+                                            <span class="fw-bold">Как защищен мой аккаунт?</span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseEleven" class="accordion-collapse collapse" aria-labelledby="headingEleven" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            <p>Для защиты аккаунтов пользователей мы используем:</p>
+                                            <ul>
+                                                <li><strong>Двухфакторную аутентификацию (2FA)</strong> — дополнительный уровень защиты при входе в систему.</li>
+                                                <li><strong>Шифрование данных</strong> — все конфиденциальные данные хранятся в зашифрованном виде.</li>
+                                                <li><strong>Защиту от подбора паролей</strong> — система блокирует доступ после нескольких неудачных попыток входа.</li>
+                                                <li><strong>Уведомления о подозрительной активности</strong> — система автоматически уведомляет о попытках входа с новых устройств или необычных локаций.</li>
+                                                <li><strong>Регулярные проверки на уязвимости</strong> — мы постоянно тестируем систему на наличие потенциальных уязвимостей.</li>
+                                            </ul>
+                                            <p>Мы рекомендуем всем пользователям активировать 2FA и использовать сложные уникальные пароли для максимальной защиты.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Скрипт для копирования текста -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Находим все кнопки с классом copy-btn
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Получаем текст для копирования из атрибута data-content
+                const content = this.getAttribute('data-content');
+                
+                if (this.innerText.includes('Поделиться')) {
+                    // Если это кнопка "Поделиться", показываем диалог шаринга
+                    if (navigator.share) {
+                        navigator.share({
+                            title: 'TrustLendX - Инвестиционная платформа',
+                            text: content,
+                            url: window.location.href
+                        })
+                        .then(() => console.log('Shared successfully'))
+                        .catch((error) => console.log('Error sharing:', error));
+                    } else {
+                        // Если API шаринга не поддерживается, просто копируем
+                        copyToClipboard(content);
+                        showCopyFeedback(this, 'Скопировано для шаринга!');
+                    }
+                } else {
+                    // Если это кнопка "Копировать статью", копируем текст
+                    copyToClipboard(content);
+                    showCopyFeedback(this, 'Скопировано в буфер обмена!');
+                }
+            });
+        });
+        
+        // Функция для копирования текста в буфер обмена
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+        
+        // Функция для отображения уведомления о копировании
+        function showCopyFeedback(button, message) {
+            const originalText = button.innerHTML;
+            button.innerHTML = `<i class="fas fa-check"></i> ${message}`;
+            button.classList.add('btn-success');
+            button.classList.remove('btn-outline-primary');
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.classList.remove('btn-success');
+                button.classList.add('btn-outline-primary');
+            }, 2000);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,251 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block admin_content %}
+<div class="container mt-4">
+    <div class="card bg-dark text-light">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">Управление TON транзакциями (Упрощенный режим)</h2>
+            <a href="{{ url_for('admin_ton_transactions') }}" class="btn btn-primary">
+                <i class="fas fa-table me-1"></i> Стандартный вид
+            </a>
+        </div>
+        <div class="card-body">
+            <!-- Упрощенная форма поиска -->
+            <div class="mb-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <form id="memo-search-form" onsubmit="event.preventDefault(); filterTransactionsByMemo(document.getElementById('memo-search').value.trim());">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" id="memo-search" class="form-control" placeholder="Поиск по MEMO">
+                                <button class="btn btn-primary" type="submit" id="memo-search-button">
+                                    Найти
+                                </button>
+                                <button class="btn btn-secondary" type="button" id="memo-search-clear" onclick="document.getElementById('memo-search').value = ''; filterTransactionsByMemo('');">
+                                    Сбросить
+                                </button>
+                            </div>
+                            <div class="form-text text-light mt-1">
+                                Введите MEMO для поиска конкретной транзакции
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% for tx in transactions %}
+            <div class="card mb-3 {% if tx.status == 'completed' %}bg-success bg-opacity-25{% elif tx.status == 'failed' or tx.status == 'cancelled' %}bg-danger bg-opacity-25{% elif tx.status == 'payment_awaiting' %}bg-warning bg-opacity-25{% else %}bg-info bg-opacity-25{% endif %}">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5 class="card-title">
+                                ID: {{ tx.id }} | MEMO: {{ tx.memo }}
+                            </h5>
+                            <p class="mb-1">
+                                <strong>Пользователь:</strong> {{ user_dict.get(tx.user_id, {}).get('username', 'Пользователь #' + tx.user_id|string) }}
+                            </p>
+                            <p class="mb-1">
+                                <strong>Сумма:</strong> {{ tx.amount }} USDT
+                            </p>
+                            <p class="mb-1">
+                                <strong>Статус:</strong> 
+                                <span id="status-text-{{ tx.id }}" class="badge 
+                                    {% if tx.status == 'completed' %}bg-success
+                                    {% elif tx.status == 'failed' %}bg-danger
+                                    {% elif tx.status == 'cancelled' %}bg-danger
+                                    {% elif tx.status == 'payment_awaiting' %}bg-warning
+                                    {% else %}bg-info{% endif %}">
+                                    {% if tx.status == 'completed' %}Завершена
+                                    {% elif tx.status == 'failed' %}Ошибка
+                                    {% elif tx.status == 'cancelled' %}Отменена
+                                    {% elif tx.status == 'payment_awaiting' %}Ожидает оплаты
+                                    {% elif tx.status == 'pending' %}В обработке
+                                    {% else %}{{ tx.status }}{% endif %}
+                                </span>
+                            </p>
+                            <p class="mb-1">
+                                <strong>Дата создания:</strong> {{ tx.created_at.strftime('%d.%m.%Y %H:%M') }}
+                            </p>
+                            {% if tx.payment_confirmed_at %}
+                            <p class="mb-1">
+                                <strong>Дата подтверждения:</strong> {{ tx.payment_confirmed_at.strftime('%d.%m.%Y %H:%M') }}
+                            </p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 d-flex flex-column align-items-end justify-content-center">
+                            <div class="d-flex flex-column gap-2 mt-2">
+                                <form method="POST" action="/admin/ton-transaction/{{ tx.id }}/update-status-direct">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="status" value="completed">
+                                    <button type="submit" class="btn btn-success btn-lg w-100">
+                                        <i class="fas fa-check-circle me-2"></i> Отметить как завершенную
+                                    </button>
+                                </form>
+                                
+                                <form method="POST" action="/admin/ton-transaction/{{ tx.id }}/update-status-direct">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="status" value="payment_awaiting">
+                                    <button type="submit" class="btn btn-warning btn-lg w-100">
+                                        <i class="fas fa-clock me-2"></i> Отметить как ожидающую
+                                    </button>
+                                </form>
+                                
+                                <form method="POST" action="/admin/ton-transaction/{{ tx.id }}/update-status-direct">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="status" value="failed">
+                                    <button type="submit" class="btn btn-danger btn-lg w-100">
+                                        <i class="fas fa-times-circle me-2"></i> Отметить как ошибку
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock admin_content %}
+
+{% block scripts %}
+<script>
+// Функция фильтрации карточек транзакций по MEMO
+function filterTransactionsByMemo(searchText) {
+    console.log('Начало фильтрации по MEMO (режим карточек). Поисковый запрос:', searchText);
+    
+    // Выбираем все карточки транзакций, кроме карточки поиска
+    const transactionCards = document.querySelectorAll('.card.mb-3');
+    console.log('Найдено карточек для фильтрации:', transactionCards.length);
+    
+    let visibleCount = 0;
+    
+    transactionCards.forEach(card => {
+        const titleElement = card.querySelector('.card-title');
+        if (!titleElement) {
+            console.log('Заголовок карточки не найден:', card);
+            return;
+        }
+        
+        const memoText = titleElement.textContent;
+        console.log('Проверка текста карточки:', memoText);
+        
+        if (searchText === '' || memoText.includes(searchText)) {
+            card.style.display = '';
+            visibleCount++;
+            console.log('Карточка видима:', memoText);
+        } else {
+            card.style.display = 'none';
+            console.log('Карточка скрыта:', memoText);
+        }
+    });
+    
+    // Показываем уведомление о результатах поиска
+    console.log('Результат фильтрации карточек. Видимых записей:', visibleCount);
+    if (searchText !== '') {
+        showNotification(`Найдено ${visibleCount} транзакций с MEMO, содержащим "${searchText}"`, 'info');
+    }
+    
+    return visibleCount;
+}
+
+// Функция создания уведомления
+function showNotification(message, type = 'info') {
+    // Создаем уведомление
+    const notification = document.createElement('div');
+    notification.className = `toast align-items-center text-white bg-${type} border-0`;
+    notification.setAttribute('role', 'alert');
+    notification.setAttribute('aria-live', 'assertive');
+    notification.setAttribute('aria-atomic', 'true');
+    
+    notification.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+    
+    // Добавляем в контейнер для уведомлений (если он не существует, создаем)
+    let container = document.querySelector('.toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'toast-container position-fixed top-0 end-0 p-3';
+        document.body.appendChild(container);
+    }
+    
+    container.appendChild(notification);
+    
+    // Инициализируем и показываем уведомление
+    const toast = new bootstrap.Toast(notification, {
+        autohide: true,
+        delay: 3000
+    });
+    toast.show();
+    
+    // Удаляем после скрытия
+    notification.addEventListener('hidden.bs.toast', function () {
+        notification.remove();
+    });
+}
+
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Страница управления TON-транзакциями (упрощенный режим) загружена');
+    
+    // Добавляем обработчики для поиска по MEMO
+    const searchInput = document.getElementById('memo-search');
+    const searchButton = document.getElementById('memo-search-button');
+    const clearButton = document.getElementById('memo-search-clear');
+    
+    console.log('Найдены элементы формы поиска:', {
+        searchInput: searchInput ? 'Да' : 'Нет',
+        searchButton: searchButton ? 'Да' : 'Нет', 
+        clearButton: clearButton ? 'Да' : 'Нет'
+    });
+    
+    if (searchInput && searchButton && clearButton) {
+        console.log('Добавление обработчиков событий для формы поиска...');
+        
+        // Проверка функции поиска кнопкой
+        searchButton.addEventListener('click', function() {
+            console.log('Нажата кнопка поиска');
+            const searchText = searchInput.value.trim();
+            console.log('Текст поиска:', searchText);
+            filterTransactionsByMemo(searchText);
+        });
+        
+        // Обработчик для кнопки сброса
+        clearButton.addEventListener('click', function() {
+            console.log('Нажата кнопка сброса');
+            searchInput.value = '';
+            filterTransactionsByMemo('');
+        });
+        
+        // Обработчик нажатия Enter в поле поиска
+        searchInput.addEventListener('keydown', function(e) {
+            console.log('Нажата клавиша в поле поиска:', e.key);
+            if (e.key === 'Enter') {
+                console.log('Нажат Enter в поле поиска');
+                e.preventDefault();
+                const searchText = searchInput.value.trim();
+                filterTransactionsByMemo(searchText);
+            }
+        });
+        
+        console.log('Обработчики событий успешно добавлены');
+        
+        // Добавим прямой вызов функции для проверки работы фильтрации
+        if (document.querySelectorAll('.card.mb-3').length > 0) {
+            console.log('Выполняем тестовую фильтрацию карточек...');
+            setTimeout(() => {
+                showNotification('Фильтрация MEMO готова к использованию', 'info');
+            }, 1000);
+        }
+    } else {
+        console.error('Ошибка: Не найдены все элементы формы поиска!');
+        showNotification('Ошибка инициализации формы поиска', 'danger');
+    }
+});
+</script>
+{% endblock admin_content %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Подтверждение Email - TrustLendX{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-white">
+                    <h3 class="mb-0">Требуется подтверждение Email</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <p><strong>Подтвердите ваш email адрес</strong></p>
+                        <p>Для продолжения работы с платформой необходимо подтвердить ваш email адрес: <strong>{{ email }}</strong></p>
+                    </div>
+
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <p>Мы отправили письмо с ссылкой для подтверждения на указанный адрес. Пожалуйста, проверьте вашу почту и перейдите по ссылке из письма.</p>
+                    
+                    <div class="alert alert-warning">
+                        <p><strong>Не получили письмо?</strong></p>
+                        <p>Проверьте папку "Спам" или воспользуйтесь функцией повторной отправки.</p>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('resend_verification_email') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="email" value="{{ email }}">
+                        <button type="submit" class="btn btn-primary">Отправить письмо повторно</button>
+                    </form>
+                    
+                    <div class="mt-4">
+                        <p>Возникли проблемы с получением письма?</p>
+                        <a href="{{ url_for('manual_email_verification') }}" class="btn btn-outline-secondary">Ручная верификация</a>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="{{ url_for('login') }}" class="btn btn-link">Вернуться на страницу входа</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

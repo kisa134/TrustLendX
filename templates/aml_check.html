@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+
+{% block title %}AML-проверка криптокошельков{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Маленькая кнопка "Проверить" для мобильной версии временно скрыта -->
+    <!--div class="d-lg-none mb-3">
+        <a href="#check-form-section" class="btn btn-sm btn-primary">
+            <i class="fas fa-search me-1"></i> Проверить
+        </a>
+    </div-->
+    
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="mb-4">
+                <h1 class="mb-0">AML-проверка криптокошельков</h1>
+            </div>
+            <p class="lead">
+                Проверьте безопасность своего криптокошелька перед транзакцией! Наш сервис анализирует адреса на предмет связей 
+                с мошенниками, теневыми рынками и незаконной деятельностью.
+            </p>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="card-title mb-3">Зачем нужна AML-проверка?</h3>
+                    <p>Криптовалюты предоставляют свободу, но анонимность может скрывать риски. AML (Anti-Money Laundering) – это инструмент для проверки чистоты кошелька.</p>
+                    
+                    <h5 class="mt-4">Сценарии, когда AML-проверка особенно важна:</h5>
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item bg-transparent">Вы принимаете оплату в криптовалюте и не хотите получить "грязные" средства.</li>
+                        <li class="list-group-item bg-transparent">Вы отправляете крупную сумму и хотите убедиться, что адрес не связан с мошенничеством.</li>
+                        <li class="list-group-item bg-transparent">Вы работаете с криптовалютными биржами и боитесь блокировки счета.</li>
+                        <li class="list-group-item bg-transparent">Вам нужно соблюдать регуляторные требования (например, KYC/AML).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="card-title mb-3">Как это работает?</h3>
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3 mb-md-0">
+                            <div class="mb-3 d-flex justify-content-center">
+                                <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center" style="width: 60px; height: 60px;">
+                                    <span class="h4 mb-0">1</span>
+                                </div>
+                            </div>
+                            <h5>Введите адрес криптокошелька</h5>
+                        </div>
+                        <div class="col-md-4 text-center mb-3 mb-md-0">
+                            <div class="mb-3 d-flex justify-content-center">
+                                <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center" style="width: 60px; height: 60px;">
+                                    <span class="h4 mb-0">2</span>
+                                </div>
+                            </div>
+                            <h5>Система анализирует транзакции и связи</h5>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="mb-3 d-flex justify-content-center">
+                                <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center" style="width: 60px; height: 60px;">
+                                    <span class="h4 mb-0">3</span>
+                                </div>
+                            </div>
+                            <h5>Получите детальный отчет о рисках</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info mb-4">
+                <div class="d-flex">
+                    <div class="me-3">
+                        <i class="fas fa-info-circle fa-2x"></i>
+                    </div>
+                    <div>
+                        <h4 class="alert-heading">Сервис AML-проверки</h4>
+                        <p class="mb-0">
+                            Сервис находится в разработке. В ближайшее время вы сможете проверять любые криптоадреса 
+                            в основных блокчейн-сетях и получать полную информацию о безопасности транзакций.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Часто задаваемые вопросы (FAQ)</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="accordion" id="amlFaqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeading1">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1" aria-expanded="true" aria-controls="faqCollapse1">
+                                    Что такое AML-проверка криптокошелька?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse1" class="accordion-collapse collapse show" aria-labelledby="faqHeading1" data-bs-parent="#amlFaqAccordion">
+                                <div class="accordion-body">
+                                    AML (Anti-Money Laundering) – это система противодействия отмыванию денег. Проверка криптокошелька на соответствие AML-стандартам помогает выявить, связан ли адрес с незаконной деятельностью, мошенничеством или санкциями.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeading2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
+                                    Зачем проверять криптовалютный адрес перед переводом?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faqHeading2" data-bs-parent="#amlFaqAccordion">
+                                <div class="accordion-body">
+                                    Если вы отправите средства на подозрительный адрес, ваши деньги могут оказаться замешанными в схемах отмывания или финансирования незаконных операций. Это может привести к блокировке ваших средств на биржах или к проблемам с регуляторами.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeading3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
+                                    Как работает AML-анализ кошелька?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3" data-bs-parent="#amlFaqAccordion">
+                                <div class="accordion-body">
+                                    <ol>
+                                        <li>Вводите адрес криптовалютного кошелька.</li>
+                                        <li>Система анализирует его транзакции, связи и происхождение средств.</li>
+                                        <li>Вы получаете отчет с рейтингом риска: чистый, сомнительный или высокий риск.</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeading4">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse4" aria-expanded="false" aria-controls="faqCollapse4">
+                                    Какие риски связаны с "грязными" криптовалютами?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse4" class="accordion-collapse collapse" aria-labelledby="faqHeading4" data-bs-parent="#amlFaqAccordion">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>Блокировка средств на биржах.</li>
+                                        <li>Проблемы с выводом криптовалюты.</li>
+                                        <li>Возможные юридические последствия.</li>
+                                        <li>Потеря доверия к вашему кошельку со стороны контрагентов.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeading5">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse5" aria-expanded="false" aria-controls="faqCollapse5">
+                                    Какие криптовалюты поддерживаются для AML-проверки?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse5" class="accordion-collapse collapse" aria-labelledby="faqHeading5" data-bs-parent="#amlFaqAccordion">
+                                <div class="accordion-body">
+                                    Мы поддерживаем анализ популярных блокчейнов, включая Bitcoin (BTC), Ethereum (ETH), USDT (TRC-20, ERC-20, BEP-20), Binance Coin (BNB), Solana (SOL), Polygon (MATIC) и другие.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeading6">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse6" aria-expanded="false" aria-controls="faqCollapse6">
+                                    Сколько стоит проверка и как быстро я получу результат?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse6" class="accordion-collapse collapse" aria-labelledby="faqHeading6" data-bs-parent="#amlFaqAccordion">
+                                <div class="accordion-body">
+                                    <p>Стоимость проверки одного кошелька – <s>3$</s> <strong class="text-success">1$</strong> (оплата в TRX). Для инвесторов платформы проверка предоставляется <strong class="text-success">бесплатно</strong>.</p>
+                                    <p>Все транзакции, поступающие на платформу, автоматически проходят AML-проверку.</p>
+                                    <p>Отчет формируется моментально после ввода адреса.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faqHeading7">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse7" aria-expanded="false" aria-controls="faqCollapse7">
+                                    Как избежать работы с подозрительными кошельками?
+                                </button>
+                            </h2>
+                            <div id="faqCollapse7" class="accordion-collapse collapse" aria-labelledby="faqHeading7" data-bs-parent="#amlFaqAccordion">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>Перед получением платежей проверяйте адрес отправителя.</li>
+                                        <li>Перед отправкой средств убеждайтесь, что адрес чистый.</li>
+                                        <li>Не работайте с анонимными сервисами, которые не проходят AML-контроль.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4" id="check-form-section">
+            <div class="card border-0 shadow-sm sticky-lg-top" style="top: 2rem; z-index: 1;">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Воспользуйтесь AML-проверкой</h4>
+                </div>
+                <div class="card-body p-4">
+                    <p>Наша система быстро проверит любой криптовалютный адрес на предмет связей с мошенничеством, отмыванием денег и другими рисками.</p>
+                    
+                    <div class="alert alert-warning mt-4">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Сервис проверки адресов временно недоступен. Ведутся технические работы.
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h5 class="mb-3">Преимущества проверки:</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item bg-transparent ps-0">
+                                <i class="fas fa-check-circle text-success me-2"></i> Мгновенный результат
+                            </li>
+                            <li class="list-group-item bg-transparent ps-0">
+                                <i class="fas fa-check-circle text-success me-2"></i> Поддержка всех популярных блокчейнов
+                            </li>
+                            <li class="list-group-item bg-transparent ps-0">
+                                <i class="fas fa-check-circle text-success me-2"></i> Доступная стоимость
+                            </li>
+                            <li class="list-group-item bg-transparent ps-0">
+                                <i class="fas fa-check-circle text-success me-2"></i> Бесплатно для инвесторов платформы
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h3 class="card-title mb-4">Почему выбирают нас?</h3>
+                    <div class="row">
+                        <div class="col-md-4 mb-4 mb-md-0">
+                            <div class="d-flex">
+                                <div class="me-3 text-primary">
+                                    <i class="fas fa-bolt fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h5>Мгновенный результат</h5>
+                                    <p class="text-muted">Не нужно ждать, получите результат анализа в течение нескольких секунд.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4 mb-md-0">
+                            <div class="d-flex">
+                                <div class="me-3 text-primary">
+                                    <i class="fas fa-database fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h5>Самые точные данные</h5>
+                                    <p class="text-muted">Работаем с крупнейшими базами данных и аналитическими сервисами.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex">
+                                <div class="me-3 text-primary">
+                                    <i class="fas fa-dollar-sign fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h5>Доступная цена</h5>
+                                    <p class="text-muted">Всего 1$ за комплексную проверку, которая может сэкономить тысячи.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function showDemoAlert() {
+        alert('Функция AML-проверки в разработке. Будет доступна после подключения API.');
+    }
+    
+    // Плавная прокрутка для всех якорных ссылок
+    document.addEventListener('DOMContentLoaded', function() {
+        // Добавим поведение плавной прокрутки для всех ссылок-якорей
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    console.log('Прокручиваем к элементу:', targetId);
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    });
+    
+    // Добавление структурированных данных для SEO
+    document.addEventListener('DOMContentLoaded', function() {
+        // Создаем JSON-LD для FAQPage
+        const scriptElement = document.createElement('script');
+        scriptElement.type = 'application/ld+json';
+        
+        const faqData = {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "Что такое AML-проверка криптокошелька?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "AML (Anti-Money Laundering) – это система противодействия отмыванию денег. Проверка криптокошелька на соответствие AML-стандартам помогает выявить, связан ли адрес с незаконной деятельностью, мошенничеством или санкциями."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Зачем проверять криптовалютный адрес перед переводом?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Если вы отправите средства на подозрительный адрес, ваши деньги могут оказаться замешанными в схемах отмывания или финансирования незаконных операций. Это может привести к блокировке ваших средств на биржах или к проблемам с регуляторами."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Какие риски связаны с грязными криптовалютами?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Основные риски: блокировка средств на биржах, проблемы с выводом криптовалюты, возможные юридические последствия, потеря доверия к вашему кошельку со стороны контрагентов."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Какие криптовалюты поддерживаются для AML-проверки?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Мы поддерживаем анализ популярных блокчейнов, включая Bitcoin (BTC), Ethereum (ETH), USDT (TRC-20, ERC-20, BEP-20), Binance Coin (BNB), Solana (SOL), Polygon (MATIC) и другие."
+                    }
+                }
+            ]
+        };
+        
+        scriptElement.textContent = JSON.stringify(faqData);
+        document.head.appendChild(scriptElement);
+    });
+</script>
+{% endblock %}

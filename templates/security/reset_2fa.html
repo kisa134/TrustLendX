@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Сброс двухфакторной аутентификации{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">Сброс двухфакторной аутентификации</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Информация:</strong> Используйте эту форму, если у вас нет доступа к устройству с приложением аутентификатора.
+                    </div>
+                    
+                    <p>Для сброса двухфакторной аутентификации необходимо ввести ваш email и резервный код, полученный при настройке 2FA.</p>
+                    
+                    <form method="post" action="{{ url_for('reset_2fa') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="backup_code" class="form-label">Резервный код</label>
+                            <input type="text" class="form-control" id="backup_code" name="backup_code" required>
+                            <div class="form-text">
+                                Резервный код, который вы сохранили при настройке двухфакторной аутентификации.
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-key me-1"></i> Сбросить 2FA
+                            </button>
+                            <a href="{{ url_for('login') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Вернуться на страницу входа
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <a href="{{ url_for('login') }}" class="text-decoration-none">Вернуться к входу в систему</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,208 @@
+<!-- Последние транзакции -->
+<section class="py-5 bg-dark" id="section-transactions" data-section="transactions">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-heading mx-auto">Последние транзакции</h2>
+            <p class="lead text-muted">Инвесторы со всего мира уже используют нашу платформу</p>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Пользователь</th>
+                        <th>Сумма</th>
+                        <th>Тип</th>
+                        <th>Статус</th>
+                        <th>Дата</th>
+                    </tr>
+                </thead>
+                <tbody id="transactions-body">
+                    <!-- Транзакции будут добавляться здесь динамически -->
+                </tbody>
+            </table>
+        </div>
+        <div class="text-center mt-3">
+            <small class="text-muted fst-italic">* Имена пользователей скрыты для обеспечения конфиденциальности</small>
+        </div>
+    </div>
+</section>
+
+<script>
+// Скрипт для динамического отображения транзакций
+document.addEventListener("DOMContentLoaded", function() {
+    // Массив с именами для генерации транзакций
+    const users = [
+        // Русские имена
+        "Александр", "Алексей", "Анатолий", "Андрей", "Антон", "Аркадий", "Артём", "Борис", "Вадим",
+        "Валерий", "Виктор", "Владимир", "Владислав", "Георгий", "Даниил", "Денис", "Дмитрий",
+        "Евгений", "Иван", "Игорь", "Илья", "Кирилл", "Константин", "Максим", "Михаил", "Никита",
+        "Николай", "Олег", "Павел", "Пётр", "Роман", "Руслан", "Сергей", "Станислав", "Степан",
+        "Алёна", "Алина", "Алла", "Анастасия", "Анна", "Валентина", "Валерия", "Вера", "Виктория",
+        "Галина", "Дарья", "Екатерина", "Елена", "Елизавета", "Ирина", "Ксения", "Лариса", "Любовь",
+        "Марина", "Мария", "Наталья", "Ольга", "Полина", "Светлана", "София", "Татьяна", "Юлия"
+    ];
+
+    // Форматирование числа с разделителями тысяч
+    function formatNumber(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    // Генерация суммы с учетом вероятностей
+    function generateAmount() {
+        const random = Math.random() * 100;
+        if (random < 40) return Math.floor(Math.random() * 900) + 100; // 100-1000 (40%)
+        else if (random < 70) return Math.floor(Math.random() * 9000) + 1000; // 1000-10000 (30%)
+        else if (random < 85) return Math.floor(Math.random() * 40000) + 10000; // 10000-50000 (15%)
+        else if (random < 95) return Math.floor(Math.random() * 20000) + 50000; // 50000-70000 (10%)
+        else if (random < 98) return Math.floor(Math.random() * 20000) + 70000; // 70000-90000 (3%)
+        else return Math.floor(Math.random() * 20000) + 90000; // 90000-110000 (2%)
+    }
+
+    // Генерация типа (80% депозит, 20% вывод)
+    function generateType() {
+        return Math.random() < 0.8 ? "Депозит" : "Вывод";
+    }
+
+    // Генерация статуса (для депозита: 90% завершено, 10% отклонено)
+    function generateStatus(type) {
+        if (type === "Вывод") return "Завершено"; // Выводы всегда завершены
+        return Math.random() < 0.9 ? "Завершено" : "Отклонено"; // Для депозитов
+    }
+
+    // Случайный интервал 4-37 минут в миллисекундах
+    function getRandomInterval() {
+        // Для тестирования используем 5-15 секунд вместо минут
+        return (Math.floor(Math.random() * 10) + 5) * 1000;
+        // Реальная версия (закомментирована)
+        // return Math.floor(Math.random() * (37 - 4 + 1) + 4) * 60 * 1000;
+    }
+
+    // Генерация транзакции
+    function generateTransaction() {
+        const user = users[Math.floor(Math.random() * users.length)];
+        const type = generateType();
+        const status = generateStatus(type);
+        let amount = generateAmount();
+        
+        // Минимум 100 USDT
+        amount = Math.max(100, amount);
+        // Максимум для вывода 110000 USDT
+        if (type === "Вывод") amount = Math.min(110000, amount);
+        
+        const now = new Date();
+        const date = now.toLocaleString("ru-RU", {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        const txId = "TX" + (Math.floor(Math.random() * 90000) + 10000);
+
+        return {
+            id: txId,
+            user: user,
+            amount: formatNumber(amount) + " USDT",
+            type: type,
+            status: status,
+            date: date
+        };
+    }
+
+    // Добавление транзакции в таблицу
+    function addTransaction() {
+        const tbody = document.getElementById("transactions-body");
+        const transaction = generateTransaction();
+
+        const row = document.createElement("tr");
+        
+        const badgeClass = transaction.type === "Депозит" ? "bg-success" : "bg-primary";
+        const statusClass = transaction.status === "Завершено" ? "text-success" : "text-danger";
+        
+        row.innerHTML = `
+            <td><span class="badge bg-secondary">${transaction.id}</span></td>
+            <td>${transaction.user.charAt(0)}***${transaction.user.slice(-1)}</td>
+            <td>${transaction.amount}</td>
+            <td><span class="badge ${badgeClass}">${transaction.type}</span></td>
+            <td class="${statusClass}">${transaction.status}</td>
+            <td>${transaction.date}</td>
+        `;
+
+        // Добавляем новую строку в начало таблицы с анимацией
+        row.style.opacity = "0";
+        row.style.transform = "translateY(-20px)";
+        tbody.insertBefore(row, tbody.firstChild);
+        
+        // Применяем анимацию появления
+        setTimeout(() => {
+            row.style.transition = "all 0.5s ease";
+            row.style.opacity = "1";
+            row.style.transform = "translateY(0)";
+        }, 10);
+
+        // Удаляем последнюю строку, если их больше 5
+        if (tbody.children.length > 5) {
+            const lastChild = tbody.lastChild;
+            lastChild.style.opacity = "0";
+            lastChild.style.transform = "translateY(20px)";
+            setTimeout(() => {
+                tbody.removeChild(lastChild);
+            }, 500);
+        }
+        
+        // Планируем следующую транзакцию
+        setTimeout(addTransaction, getRandomInterval());
+    }
+
+    // Сразу создаем несколько первых транзакций
+    function initTransactions() {
+        console.log("Initializing transactions...");
+        const tbody = document.getElementById("transactions-body");
+        if (!tbody) {
+            console.error("Transaction table body not found!");
+            return;
+        }
+        
+        // Создаем 5 транзакций с небольшими задержками
+        for (let i = 0; i < 5; i++) {
+            setTimeout(() => {
+                const transaction = generateTransaction();
+                const row = document.createElement("tr");
+                
+                const badgeClass = transaction.type === "Депозит" ? "bg-success" : "bg-primary";
+                const statusClass = transaction.status === "Завершено" ? "text-success" : "text-danger";
+                
+                row.innerHTML = `
+                    <td><span class="badge bg-secondary">${transaction.id}</span></td>
+                    <td>${transaction.user.charAt(0)}***${transaction.user.slice(-1)}</td>
+                    <td>${transaction.amount}</td>
+                    <td><span class="badge ${badgeClass}">${transaction.type}</span></td>
+                    <td class="${statusClass}">${transaction.status}</td>
+                    <td>${transaction.date}</td>
+                `;
+                
+                tbody.appendChild(row);
+                
+                // Анимация появления
+                row.style.opacity = "0";
+                row.style.transform = "translateY(20px)";
+                setTimeout(() => {
+                    row.style.transition = "all 0.5s ease";
+                    row.style.opacity = "1";
+                    row.style.transform = "translateY(0)";
+                }, 50);
+                
+                // Если это последняя начальная транзакция, запускаем автогенерацию
+                if (i === 4) {
+                    setTimeout(addTransaction, getRandomInterval());
+                }
+            }, i * 300);
+        }
+    }
+
+    // Запускаем инициализацию
+    initTransactions();
+});
+</script>

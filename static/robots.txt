@@ -1,0 +1,25 @@
+User-agent: *
+Disallow: /admin
+Disallow: /secure-admin
+Disallow: /secure-admin-login
+Disallow: /admin-dashboard
+Disallow: /admin-users
+Disallow: /admin-user
+Disallow: /admin-transactions
+Disallow: /admin-transaction
+Disallow: /admin-ton-transactions
+Disallow: /admin-notifications
+Disallow: /admin-messages
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /logout
+Disallow: /setup-2fa
+Disallow: /verify-2fa
+Disallow: /disable-2fa
+Disallow: /reset-2fa
+Disallow: /change-password
+Disallow: /api/
+Disallow: /nowpayments-webhook
+
+Sitemap: https://trustlendx.com/sitemap.xml

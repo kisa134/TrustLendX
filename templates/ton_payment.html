@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+
+{% block title %}Оплата депозита через TON{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Оплата инвестиции через TON</h4>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <span class="badge bg-{{ 'success' if payment.status == 'completed' else 'warning' }} fs-6">
+                            {{ 'Оплачено' if payment.status == 'completed' else 'Ожидание оплаты' }}
+                        </span>
+                    </div>
+
+                    {% if payment.status == 'completed' %}
+                        <div class="alert alert-success">
+                            <h5 class="alert-heading">Платеж успешно получен!</h5>
+                            <p>Ваш депозит успешно оплачен и активирован. Средства будут инвестированы согласно выбранным условиям.</p>
+                            <div class="my-3 p-3 bg-light rounded">
+                                <p class="mb-1"><strong>Сумма инвестиции:</strong> {{ payment.amount }} USDT</p>
+                                <p class="mb-1"><strong>Срок:</strong> 
+                                    {% if payment.term_days <= 28 %}
+                                        {{ (payment.term_days / 7)|int }} {% if (payment.term_days / 7)|int == 1 %}неделя{% elif (payment.term_days / 7)|int < 5 %}недели{% else %}недель{% endif %}
+                                    {% else %}
+                                        {{ (payment.term_days / 30)|int }} {% if (payment.term_days / 30)|int == 1 %}месяц{% elif (payment.term_days / 30)|int < 5 %}месяца{% else %}месяцев{% endif %}
+                                    {% endif %}
+                                </p>
+                                <p class="mb-1"><strong>Ожидаемая прибыль:</strong> {{ payment.expected_profit|round(2) }} USDT</p>
+                                <p class="mb-0"><strong>Дата завершения:</strong> {{ payment.deposit_end_date|default('Н/Д')|datetime }}</p>
+                            </div>
+                            <hr>
+                            <p class="mb-0"><strong>Дата подтверждения:</strong> {{ payment.payment_confirmed_at|default('Н/Д')|datetime }}</p>
+                            <p class="mb-0"><strong>ID транзакции:</strong> <small>{{ payment.tx_hash|default('Н/Д') }}</small></p>
+                        </div>
+                        <div class="text-center mt-4">
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Вернуться в личный кабинет</a>
+                        </div>
+                    {% else %}
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="text-center">
+                                    <h5>Отсканируйте QR-код</h5>
+                                    <p class="text-muted small">Используйте Tonkeeper или другой TON-кошелек</p>
+                                    {% if payment.qr_code_url %}
+                                        <img src="{{ payment.qr_code_url }}" alt="QR Code" class="img-fluid" style="max-width: 200px;">
+                                    {% else %}
+                                        <div class="alert alert-warning">QR-код недоступен</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded">
+                                    <h5>Детали платежа</h5>
+                                    <dl class="row mb-0">
+                                        <dt class="col-sm-5">Сумма:</dt>
+                                        <dd class="col-sm-7"><strong>{{ payment.amount }} USDT</strong></dd>
+                                        
+                                        <dt class="col-sm-5">Кошелек:</dt>
+                                        <dd class="col-sm-7">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control form-control-sm" value="{{ payment.wallet_address }}" id="wallet-address" readonly>
+                                                <button class="btn btn-sm btn-outline-secondary" type="button" onclick="copyToClipboard('wallet-address')">
+                                                    <i class="bi bi-clipboard"></i>
+                                                </button>
+                                            </div>
+                                        </dd>
+                                        
+                                        <dt class="col-sm-5">MEMO:</dt>
+                                        <dd class="col-sm-7">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control form-control-sm" value="{{ payment.memo }}" id="memo-code" readonly>
+                                                <button class="btn btn-sm btn-outline-secondary" type="button" onclick="copyToClipboard('memo-code')">
+                                                    <i class="bi bi-clipboard"></i>
+                                                </button>
+                                            </div>
+                                            <small class="text-danger">Обязательно укажите этот код в комментарии к платежу!</small>
+                                        </dd>
+                                    </dl>
+                                </div>
+                                <div class="alert alert-info mt-3">
+                                    <small><i class="bi bi-info-circle"></i> Ожидаемая прибыль: <strong>{{ payment.expected_profit|round(2) }} USDT</strong> 
+                                    {% if payment.term_days <= 28 %}
+                                        за {{ (payment.term_days / 7)|int }} {% if (payment.term_days / 7)|int == 1 %}неделю{% elif (payment.term_days / 7)|int < 5 %}недели{% else %}недель{% endif %}
+                                    {% else %}
+                                        за {{ (payment.term_days / 30)|int }} {% if (payment.term_days / 30)|int == 1 %}месяц{% elif (payment.term_days / 30)|int < 5 %}месяца{% else %}месяцев{% endif %}
+                                    {% endif %}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <h6><i class="bi bi-exclamation-triangle"></i> Важно:</h6>
+                            <ul class="mb-0 small">
+                                <li>Отправляйте USDT только через сеть TON</li>
+                                <li>Укажите точно такую же сумму: {{ payment.amount }} USDT</li>
+                                <li><strong>Обязательно укажите MEMO-код в комментарии к платежу</strong></li>
+                                <li>Подтверждение платежа может занять до 30 минут</li>
+                            </ul>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Вернуться</a>
+                            <form action="{{ url_for('ton.notify_payment', deposit_id=payment.id) }}" method="POST">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> Я оплатил
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="mt-3" id="payment-status-area">
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                              {% if messages %}
+                                {% for category, message in messages %}
+                                  <div class="alert alert-{{ category }}">{{ message }}</div>
+                                {% endfor %}
+                              {% endif %}
+                            {% endwith %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(elementId) {
+    const element = document.getElementById(elementId);
+    const text = element.value;
+    
+    // Используем современный Clipboard API
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            // Показываем обратную связь при успешном копировании
+            const button = element.nextElementSibling;
+            const originalHtml = button.innerHTML;
+            button.classList.remove('btn-outline-secondary');
+            button.classList.add('btn-success');
+            button.innerHTML = '<i class="bi bi-check"></i>';
+            
+            setTimeout(() => {
+                button.innerHTML = originalHtml;
+                button.classList.remove('btn-success');
+                button.classList.add('btn-outline-secondary');
+            }, 2000);
+        })
+        .catch(err => {
+            // В случае ошибки показываем сообщение в консоли
+            console.error('Не удалось скопировать текст: ', err);
+            alert('Не удалось скопировать текст. Пожалуйста, выделите и скопируйте вручную.');
+        });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('TON Payment Script initialized');
+    const checkPaymentBtn = document.getElementById('check-payment-btn');
+    const statusArea = document.getElementById('payment-status-area');
+    let checkInterval = null;
+    
+    // Логирование состояния кнопки проверки
+    if (checkPaymentBtn) {
+        console.log('Кнопка проверки платежа найдена:', checkPaymentBtn);
+        console.log('ID депозита:', checkPaymentBtn.getAttribute('data-deposit-id'));
+    } else {
+        console.error('Кнопка проверки платежа не найдена на странице!');
+    }
+    
+    if (statusArea) {
+        console.log('Область статуса найдена');
+    } else {
+        console.error('Область статуса не найдена на странице!');
+    }
+    
+    // Функция для проверки статуса платежа
+    function checkPaymentStatus(depositId, showLoadingUI = true) {
+        console.log('Вызвана функция checkPaymentStatus с ID:', depositId);
+        
+        if (!depositId) {
+            console.error('ID депозита не указан!');
+            if (statusArea) {
+                statusArea.innerHTML = '<div class="alert alert-danger">Ошибка: ID депозита не указан</div>';
+            }
+            return Promise.reject(new Error('ID депозита не указан'));
+        }
+        
+        if (showLoadingUI) {
+            // Disable button and show loading
+            if (checkPaymentBtn) {
+                console.log('Отключение кнопки и отображение индикатора загрузки');
+                checkPaymentBtn.disabled = true;
+                checkPaymentBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Отправка...';
+            }
+            if (statusArea) {
+                statusArea.innerHTML = '<div class="alert alert-info">Отправка уведомления администратору о вашем платеже...</div>';
+            }
+        }
+        
+        console.log('Отправка запроса проверки платежа, ID: ' + depositId);
+        
+        // Make API request with credentials to include cookies
+        // Добавляем CSRF-токен и другие необходимые заголовки
+        // Добавляем параметр show_loading, чтобы сервер знал, что пользователь нажал кнопку "Я оплатил"
+        let baseUrl = `/ton/check-payment/${depositId}`;
+        
+        // Добавляем параметр для уведомления о нажатии кнопки
+        if (showLoadingUI) {
+            console.log('Добавляем параметр show_loading=true');
+            baseUrl += '?show_loading=true';
+        }
+        
+        // Для проверки в консоли
+        console.log('Итоговый URL запроса:', baseUrl);
+        
+        return fetch(baseUrl, {
+            method: 'GET',
+            credentials: 'same-origin', // Включаем куки для авторизации
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache' // Предотвращаем кэширование запроса
+            }
+        })
+        .then(response => {
+            console.log('Статус ответа:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Полученные данные:', data);
+            
+            if (showLoadingUI && checkPaymentBtn) {
+                checkPaymentBtn.disabled = false;
+                checkPaymentBtn.innerHTML = '<i class="bi bi-check-circle"></i> Я оплатил';
+            }
+            
+            if (data.success) {
+                if (data.status === 'completed') {
+                    if (statusArea) {
+                        statusArea.innerHTML = '<div class="alert alert-success">Платеж успешно получен! Перезагрузка страницы...</div>';
+                    }
+                    
+                    // Останавливаем автоматическую проверку
+                    if (checkInterval) {
+                        console.log('Остановка автоматической проверки');
+                        clearInterval(checkInterval);
+                    }
+                    
+                    // Reload page after 2 seconds
+                    console.log('Перезагрузка страницы через 2 секунды');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                    
+                    return true; // Платеж подтвержден
+                } else {
+                    if (showLoadingUI && statusArea) {
+                        statusArea.innerHTML = '<div class="alert alert-warning">Администратор получил ваше уведомление. Ожидайте подтверждения платежа.</div>';
+                    }
+                    return false; // Платеж еще не подтвержден
+                }
+            } else {
+                if (showLoadingUI && statusArea) {
+                    statusArea.innerHTML = `<div class="alert alert-danger">Ошибка проверки платежа: ${data.error || 'Неизвестная ошибка'}</div>`;
+                }
+                return false; // Ошибка проверки
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка при проверке платежа:', error);
+            
+            if (showLoadingUI) {
+                if (checkPaymentBtn) {
+                    checkPaymentBtn.disabled = false;
+                    checkPaymentBtn.innerHTML = '<i class="bi bi-check-circle"></i> Я оплатил';
+                }
+                if (statusArea) {
+                    statusArea.innerHTML = `<div class="alert alert-danger">Ошибка соединения: ${error.message}</div>`;
+                }
+            }
+            
+            return false; // Ошибка соединения
+        });
+    }
+
+    // Функция для отладки: проверяет действительно ли элемент виден на странице
+    function verifyElementIsVisible(element, description) {
+        if (!element) {
+            console.error(`Элемент "${description}" не найден`);
+            return false;
+        }
+        const rect = element.getBoundingClientRect();
+        const isVisible = rect.width > 0 && rect.height > 0;
+        console.log(`Элемент "${description}" виден: ${isVisible}, размеры: ${rect.width}x${rect.height}`);
+        return isVisible;
+    }
+    
+    // Проверяем, что кнопка видна
+    verifyElementIsVisible(checkPaymentBtn, 'Кнопка проверки платежа');
+    
+    // Настраиваем кнопку проверки с одним единственным чистым обработчиком
+    if (checkPaymentBtn) {
+        const depositId = checkPaymentBtn.getAttribute('data-deposit-id');
+        console.log('Настройка кнопки проверки для депозита ID:', depositId);
+        
+        // Очищаем существующие обработчики (на всякий случай)
+        checkPaymentBtn.replaceWith(checkPaymentBtn.cloneNode(true));
+        
+        // Получаем свежую ссылку на клонированную кнопку
+        const freshButton = document.getElementById('check-payment-btn');
+        
+        // Добавляем единственный обработчик
+        freshButton.addEventListener('click', function checkButtonHandler(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            console.log('Кнопка проверки платежа нажата, вызов checkPaymentStatus');
+            checkPaymentStatus(depositId, true);
+            return false;
+        });
+        
+        // Автоматическая проверка каждые 30 секунд
+        if (statusArea) {
+            statusArea.innerHTML = '<div class="alert alert-info">Ожидание подтверждения платежа администратором...</div>';
+        }
+        
+        // Первая проверка сразу
+        console.log('Запуск первой проверки');
+        checkPaymentStatus(depositId, false).then(confirmed => {
+            // Если платеж не подтвержден, настраиваем интервал проверки
+            if (!confirmed) {
+                console.log('Платеж не подтвержден, настройка автоматической проверки');
+                checkInterval = setInterval(() => {
+                    console.log('Автоматическая проверка платежа');
+                    checkPaymentStatus(depositId, false);
+                }, 30000); // 30 секунд
+            }
+        }).catch(error => {
+            console.error('Ошибка при первой проверке:', error);
+        });
+    } else {
+        console.error('Не удалось настроить кнопку проверки платежа');
+    }
+});
+</script>
+{% endblock %}

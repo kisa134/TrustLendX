@@ -1,0 +1,245 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-exchange-alt me-2"></i> Тестирование IPN-уведомлений от NOWPayments</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">
+                        Данный инструмент позволяет симулировать получение IPN-уведомлений от платежной системы NOWPayments
+                        для тестирования обработки платежей без необходимости проводить реальные транзакции.
+                    </p>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> В реальном процессе, после того как клиент отправляет средства на кошелек NOWPayments,
+                        система NOWPayments отправляет уведомление на наш webhook-адрес с информацией о статусе платежа.
+                        Этот инструмент симулирует отправку такого уведомления.
+                    </div>
+                    
+                    <form method="post" action="{{ url_for('admin_ipn_test') }}" class="mt-4 border p-4 rounded">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="transaction_id" class="form-label">ID транзакции в нашей системе</label>
+                                    <select class="form-select" id="transaction_id" name="transaction_id" required>
+                                        <option value="">-- Выберите транзакцию --</option>
+                                        {% for transaction in transactions %}
+                                        <option value="{{ transaction.transaction_id }}">
+                                            {{ transaction.transaction_id }} - {{ transaction.amount }} USDT 
+                                            ({{ transaction.status }})
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <small class="text-muted">Выберите транзакцию, для которой хотите симулировать получение платежа</small>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="payment_id" class="form-label">Payment ID от NOWPayments</label>
+                                    <input type="text" class="form-control" id="payment_id" name="payment_id" 
+                                           placeholder="Например: 5865369832" required>
+                                    <small class="text-muted">ID платежа в системе NOWPayments (любое число для тестирования)</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="payment_status" class="form-label">Статус платежа</label>
+                                    <select class="form-select" id="payment_status" name="payment_status" required>
+                                        <option value="finished">finished (завершен)</option>
+                                        <option value="confirmed">confirmed (подтвержден)</option>
+                                        <option value="sending">sending (отправляется)</option>
+                                        <option value="partially_paid">partially_paid (частично оплачен)</option>
+                                        <option value="failed">failed (ошибка)</option>
+                                        <option value="refunded">refunded (возвращен)</option>
+                                        <option value="expired">expired (истек срок)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="pay_amount" class="form-label">Сумма платежа</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="pay_amount" name="pay_amount" 
+                                               value="100" step="0.01" min="1" required>
+                                        <span class="input-group-text" id="currency-addon">USDT</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="pay_currency" class="form-label">Валюта оплаты</label>
+                                    <select class="form-select" id="pay_currency" name="pay_currency">
+                                        <option value="usdtton">USDT (TON)</option>
+                                        <option value="trx">TRX (Tron)</option>
+                                        <option value="btc">BTC (Bitcoin)</option>
+                                        <option value="eth">ETH (Ethereum)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i> Отправить тестовое IPN-уведомление
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if result %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-poll me-2"></i> Результат тестирования</h5>
+                </div>
+                <div class="card-body">
+                    {% if result.status == 'success' %}
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i> {{ result.message }}
+                    </div>
+                    
+                    <h6 class="border-bottom pb-2 mb-3">Обновленная информация о транзакции:</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <tbody>
+                                <tr>
+                                    <th style="width: 200px">ID транзакции:</th>
+                                    <td>{{ result.transaction.transaction_id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Сумма:</th>
+                                    <td>{{ result.transaction.amount }} USDT</td>
+                                </tr>
+                                <tr>
+                                    <th>Статус:</th>
+                                    <td>
+                                        {% if result.transaction.status == 'pending' %}
+                                        <span class="badge bg-warning">Ожидает оплаты</span>
+                                        {% elif result.transaction.status == 'completed' %}
+                                        <span class="badge bg-success">Завершено</span>
+                                        {% elif result.transaction.status == 'failed' %}
+                                        <span class="badge bg-danger">Ошибка</span>
+                                        {% elif result.transaction.status == 'expired' %}
+                                        <span class="badge bg-secondary">Истек срок</span>
+                                        {% else %}
+                                        <span class="badge bg-info">{{ result.transaction.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>ID платежа в NOWPayments:</th>
+                                    <td>{{ result.transaction.payment_id or '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Статус платежа:</th>
+                                    <td>{{ result.transaction.payment_status or '-' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <h6 class="border-bottom pb-2 mb-3">Ответ от webhook:</h6>
+                        <pre class="bg-dark text-light p-3 rounded"><code>{{ result.response|tojson(indent=2) }}</code></pre>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i> {{ result.message }}
+                    </div>
+                    
+                    {% if result.response %}
+                    <div class="mt-3">
+                        <h6 class="border-bottom pb-2 mb-3">Ответ от webhook:</h6>
+                        <pre class="bg-dark text-light p-3 rounded"><code>{{ result.response }}</code></pre>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock admin_content %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Получаем элементы формы
+    const payCurrencySelect = document.getElementById('pay_currency');
+    const currencyAddon = document.getElementById('currency-addon');
+    const payAmountInput = document.getElementById('pay_amount');
+    const transactionSelect = document.getElementById('transaction_id');
+    
+    // Сохраняем исходное значение суммы
+    let originalAmount = payAmountInput.value;
+    
+    // Функция для обновления значения суммы в зависимости от выбранной валюты
+    function updatePayAmount() {
+        const selectedCurrency = payCurrencySelect.value.toLowerCase();
+        
+        // Обновляем отображение валюты
+        let displayCurrency = selectedCurrency.toUpperCase();
+        if (displayCurrency === 'USDTTON') {
+            displayCurrency = 'USDT';
+        }
+        currencyAddon.textContent = displayCurrency;
+        
+        // Если выбрана валюта TRX, применяем примерный курс обмена (1:20)
+        // Это симуляция конвертации USD в TRX
+        if (selectedCurrency === 'trx') {
+            // Примерно 1 USD = 20 TRX (примерный курс)
+            const trxRate = 20;
+            payAmountInput.value = (parseFloat(originalAmount) * trxRate).toFixed(2);
+        } else {
+            // Восстанавливаем исходное значение для других валют
+            payAmountInput.value = originalAmount;
+        }
+    }
+    
+    // Слушаем изменения выбора валюты
+    payCurrencySelect.addEventListener('change', updatePayAmount);
+    
+    // Инициализируем при загрузке страницы
+    updatePayAmount();
+    
+    // При изменении суммы сохраняем новое значение как исходное, если валюта не TRX
+    payAmountInput.addEventListener('change', function() {
+        if (payCurrencySelect.value.toLowerCase() !== 'trx') {
+            originalAmount = payAmountInput.value;
+        }
+    });
+    
+    // При выборе транзакции обновляем исходную сумму
+    transactionSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption) {
+            const text = selectedOption.text;
+            // Извлекаем сумму из текста опции (формат: "TX12345 - 100 USDT (status)")
+            const amountMatch = text.match(/- (\d+(?:\.\d+)?) USDT/);
+            if (amountMatch && amountMatch[1]) {
+                originalAmount = amountMatch[1];
+                // Обновляем сумму с учетом текущей валюты
+                updatePayAmount();
+            }
+        }
+    });
+});
+</script>
+{% endblock admin_content %}

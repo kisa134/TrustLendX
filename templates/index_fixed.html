@@ -1,0 +1,550 @@
+{% extends "base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center text-white" id="section-hero" data-section="hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto hero-content animate-fadeIn">
+                <h1 class="display-4 fw-bold mb-3">Инвестируй в крипто-займы и получай <span class="text-gradient-gold">от 5% в месяц и 79.6% в год</span></h1>
+                <p class="lead mb-4">Наша платформа соединяет инвесторов с профессиональными трейдерами, которые используют криптоактивы для обеспечения стабильного дохода.</p>
+                <div class="d-grid gap-2 d-flex flex-wrap justify-content-center">
+                    <a href="{{ url_for('register') }}" class="btn btn-primary px-3 me-2 mb-2 mb-md-0">
+                        <i class="fas fa-user-plus me-1"></i> Начать
+                    </a>
+                    <a href="#profitCalculator" class="btn btn-success px-3 me-2 mb-2 mb-md-0 scroll-to-calculator">
+                        <i class="fas fa-calculator me-1"></i> Калькулятор
+                    </a>
+                    <a href="{{ url_for('faq') }}" class="btn btn-outline-light px-3 mb-2 mb-md-0">
+                        <i class="fas fa-info-circle me-1"></i> Подробнее
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5" id="section-how-it-works" data-section="how-it-works">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-heading mx-auto">Как это работает</h2>
+            <p class="lead text-muted">Наша платформа предоставляет простой и безопасный способ инвестирования в крипто-займы</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="feature-box">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h4>1. Создайте аккаунт</h4>
+                    <p class="text-muted">Зарегистрируйтесь и верифицируйте свой аккаунт всего за несколько минут для начала работы.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="feature-box">
+                    <div class="feature-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h4>2. Пополните счет</h4>
+                    <p class="text-muted">Внесите криптовалюту на свой инвестиционный счет через нашу безопасную платежную систему.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4>3. Получайте доход</h4>
+                    <p class="text-muted">Трейдеры используют ваши средства для займов под залог криптоактивов, генерируя стабильный доход.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us Section -->
+<section class="py-5" id="section-why-choose-us" data-section="why-choose-us">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-heading mx-auto">Почему выбирают нас</h2>
+            <p class="lead text-muted">Наша платформа предлагает уникальные преимущества для инвесторов</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-body text-center">
+                        <i class="fas fa-shield-alt fa-3x mb-3 text-gradient-primary"></i>
+                        <h5 class="card-title">Безопасность активов</h5>
+                        <p class="card-text text-muted">Трейдеры предоставляют криптозалог для обеспечения ваших инвестиций.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-body text-center">
+                        <i class="fas fa-percentage fa-3x mb-3 text-gradient-primary"></i>
+                        <h5 class="card-title">Высокая доходность</h5>
+                        <p class="card-text text-muted">Зарабатывайте больше, чем на традиционных депозитах и сберегательных счетах.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-body text-center">
+                        <i class="fas fa-lock fa-3x mb-3 text-gradient-primary"></i>
+                        <h5 class="card-title">Прозрачный процесс</h5>
+                        <p class="card-text text-muted">Отслеживайте свои инвестиции и доходы в режиме реального времени.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-body text-center">
+                        <i class="fas fa-headset fa-3x mb-3 text-gradient-primary"></i>
+                        <h5 class="card-title">Поддержка 24/7</h5>
+                        <p class="card-text text-muted">Наша команда всегда готова помочь вам с любыми вопросами.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Calculator Section -->
+<section class="py-5" id="section-calculator" data-section="calculator">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h2 class="section-heading">Рассчитайте свой доход</h2>
+                <p class="lead text-muted">Узнайте, сколько вы можете заработать, инвестируя с нами.</p>
+                <p>Наша инвестиционная платформа предлагает конкурентоспособные доходы в зависимости от срока инвестирования. Выбирайте между еженедельными и ежемесячными планами.</p>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h5 class="mb-3 text-gradient-primary">Краткосрочные вклады:</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i> 1 неделя: 1.20%</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i> 2 недели: 2.41%</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i> 3 недели: 3.64%</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i> 4 недели: 4.88%</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="mb-3 text-gradient-primary">Долгосрочные вклады:</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i> 1 месяц: 5%</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i> 3 месяца: 15.8%</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i> 6 месяцев: 34.0%</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i> 12 месяцев: 79.6%</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="calculator-form" id="profitCalculator">
+                    <h4 class="mb-4 text-center">Инвестиционный калькулятор</h4>
+                    <form>
+                        <div class="mb-3">
+                            <label for="calc-amount" class="form-label">Сумма инвестиции (USDT)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">USDT</span>
+                                <input type="number" class="form-control" id="calc-amount" placeholder="Введите сумму" min="10" value="1000">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="calc-term-type" class="form-label">Тип срока</label>
+                            <select class="form-select" id="calc-term-type">
+                                <option value="weeks">Недели</option>
+                                <option value="months" selected>Месяцы</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3" id="weeks-term-container" style="display: none;">
+                            <label for="calc-term-weeks" class="form-label">Срок (в неделях)</label>
+                            <select class="form-select" id="calc-term-weeks">
+                                <option value="1">1 неделя - 1.2%</option>
+                                <option value="2">2 недели - 4.2%</option>
+                                <option value="3">3 недели - 7%</option>
+                                <option value="4">4 недели - 5%</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3" id="months-term-container">
+                            <label for="calc-term-months" class="form-label">Срок (в месяцах)</label>
+                            <select class="form-select" id="calc-term-months">
+                                <option value="1">1 месяц - 5%</option>
+                                <option value="2">2 месяца - 10.3%</option>
+                                <option value="3" selected>3 месяца - 15.8%</option>
+                                <option value="4">4 месяца - 21.6%</option>
+                                <option value="5">5 месяцев - 27.6%</option>
+                                <option value="6">6 месяцев - 34.0%</option>
+                                <option value="7">7 месяцев - 40.7%</option>
+                                <option value="8">8 месяцев - 47.7%</option>
+                                <option value="9">9 месяцев - 55.1%</option>
+                                <option value="10">10 месяцев - 62.9%</option>
+                                <option value="11">11 месяцев - 71.0%</option>
+                                <option value="12">12 месяцев - 79.6%</option>
+                            </select>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="button" id="calculate-btn" class="btn btn-primary">Рассчитать</button>
+                        </div>
+                    </form>
+                    
+                    <div id="calculation-result" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Как работает обеспечение -->
+<section class="py-5" id="section-collateral" data-section="collateral">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-heading mx-auto">Как работает обеспечение?</h2>
+            <p class="lead">Инвестируйте с уверенностью — мы работаем только с реальным обеспечением</p>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-4">
+                        <p class="lead mb-4">Наша платформа принимает депозиты в пределах доступного обеспечения трейдеров.</p>
+                        <p class="mb-3">Это значит:</p>
+                        <ul class="list-unstyled">
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Каждый депозит подкреплен залогом в криптовалюте.</li>
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Общий объем инвестиций ограничен — мы не принимаем больше, чем можем обеспечить.</li>
+                            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Ваши средства защищены — трейдеры работают только под гарантированное покрытие.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Последние транзакции -->
+<section class="py-5 bg-dark text-white" id="section-transactions" data-section="transactions">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-heading mx-auto">Последние транзакции</h2>
+            <p class="lead text-muted">Инвесторы со всего мира уже используют нашу платформу</p>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Пользователь</th>
+                        <th>Сумма</th>
+                        <th>Тип</th>
+                        <th>Статус</th>
+                        <th>Дата</th>
+                    </tr>
+                </thead>
+                <tbody id="transactions-body">
+                    <!-- Транзакции будут добавляться здесь динамически -->
+                </tbody>
+            </table>
+        </div>
+        <div class="text-center mt-3">
+            <small class="text-muted fst-italic">* Имена пользователей скрыты для обеспечения конфиденциальности</small>
+        </div>
+    </div>
+</section>
+
+<!-- Подключаем скрипт для транзакций -->
+<script src="/static/js/transactions.js"></script>
+
+<section class="py-5" id="section-resources" data-section="resources">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-heading mx-auto">Полезные ресурсы для криптоинвесторов</h2>
+            <p class="lead text-muted">Проверенные сервисы и инструменты, которые помогут в торговле и инвестировании</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Мониторинг криптовалют -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Мониторинг криптовалют</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://coinmarketcap.com/ru/" target="_blank" class="text-decoration-none">CoinMarketCap</a>
+                                <span class="badge bg-primary rounded-pill">Топ</span>
+                            </li>
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://www.coingecko.com/ru" target="_blank" class="text-decoration-none">CoinGecko</a>
+                                <span class="badge bg-success rounded-pill">Рекомендуем</span>
+                            </li>
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://www.tradingview.com/crypto-screener/" target="_blank" class="text-decoration-none">TradingView</a>
+                                <span class="badge bg-secondary rounded-pill">Для анализа</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Биржи и обменники -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-exchange-alt me-2"></i>Биржи и обменники</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://www.binance.com/ru" target="_blank" class="text-decoration-none">Binance</a>
+                                <span class="badge bg-primary rounded-pill">Лидер</span>
+                            </li>
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://okx.com/ru" target="_blank" class="text-decoration-none">OKX</a>
+                                <span class="badge bg-success rounded-pill">Популярная</span>
+                            </li>
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://bestchange.ru/" target="_blank" class="text-decoration-none">BestChange</a>
+                                <span class="badge bg-info rounded-pill">Обменник</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Кошельки и безопасность -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-wallet me-2"></i>Кошельки и безопасность</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://www.ledger.com/" target="_blank" class="text-decoration-none">Ledger</a>
+                                <span class="badge bg-primary rounded-pill">Hardware</span>
+                            </li>
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://trezor.io/" target="_blank" class="text-decoration-none">Trezor</a>
+                                <span class="badge bg-success rounded-pill">Hardware</span>
+                            </li>
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://trustwallet.com/ru/" target="_blank" class="text-decoration-none">Trust Wallet</a>
+                                <span class="badge bg-info rounded-pill">Mobile</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Новости и аналитика -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-newspaper me-2"></i>Новости и аналитика</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://forklog.com/" target="_blank" class="text-decoration-none">ForkLog</a>
+                                <span class="badge bg-primary rounded-pill">Новости</span>
+                            </li>
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://bits.media/" target="_blank" class="text-decoration-none">Bits.media</a>
+                                <span class="badge bg-success rounded-pill">Аналитика</span>
+                            </li>
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://cryptocurrency.tech/" target="_blank" class="text-decoration-none">Cryptocurrency.tech</a>
+                                <span class="badge bg-info rounded-pill">Обзоры</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Обучение -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-graduation-cap me-2"></i>Обучение</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://academy.binance.com/ru" target="_blank" class="text-decoration-none">Binance Academy</a>
+                                <span class="badge bg-primary rounded-pill">Основы</span>
+                            </li>
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://coinmarketcap.com/alexandria/ru/" target="_blank" class="text-decoration-none">CoinMarketCap Alexandria</a>
+                                <span class="badge bg-success rounded-pill">Статьи</span>
+                            </li>
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://www.investopedia.com/cryptocurrency-4689506" target="_blank" class="text-decoration-none">Investopedia</a>
+                                <span class="badge bg-info rounded-pill">Термины</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Инструменты проверки -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-search me-2"></i>Инструменты проверки</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://etherscan.io/" target="_blank" class="text-decoration-none">Etherscan</a>
+                                <span class="badge bg-primary rounded-pill">Ethereum</span>
+                            </li>
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="https://tronscan.org/" target="_blank" class="text-decoration-none">Tronscan</a>
+                                <span class="badge bg-success rounded-pill">TRON</span>
+                            </li>
+                            <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                <a href="{{ url_for('aml_check') }}" class="text-decoration-none">AML-проверка TrustLendX</a>
+                                <span class="badge bg-danger rounded-pill">Наш сервис</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="py-5" id="section-contact" data-section="contact">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-5 mb-4 mb-lg-0">
+                <h2 class="section-heading">Связаться с нами</h2>
+                <p class="lead text-muted">У вас есть вопросы? Мы готовы помочь!</p>
+                <div class="mt-4">
+                    <div class="d-flex mb-3">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h5 class="mb-1">Email</h5>
+                            <p class="mb-0 text-muted"><a href="https://t.me/TrustLendX_Admin" target="_blank">Telegram: @TrustLendX_Admin</a></p>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-3">
+                        <div class="contact-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h5 class="mb-1">Чат поддержки</h5>
+                            <p class="mb-0 text-muted">Доступен 24/7 в личном кабинете</p>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h5 class="mb-1">Офис</h5>
+                            <p class="mb-0 text-muted">Таллин, Эстония</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <a href="https://t.me/TrustLendX_Admin" target="_blank" class="btn btn-outline-primary me-2 mb-2">
+                        <i class="fab fa-telegram"></i> Telegram
+                    </a>
+                    <a href="#" class="btn btn-outline-primary me-2 mb-2">
+                        <i class="fab fa-discord"></i> Discord
+                    </a>
+                    <a href="#" class="btn btn-outline-primary mb-2">
+                        <i class="fab fa-medium-m"></i> Medium
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="card border-0 shadow">
+                    <div class="card-body p-4">
+                        <h4 class="mb-4 text-center">Отправить сообщение</h4>
+                        <form action="{{ url_for('contact') }}" method="post">
+                            {{ form.hidden_tag() }}
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ form.name(class="form-control", id="floatingName", placeholder="Ваше имя") }}
+                                        <label for="floatingName">Ваше имя</label>
+                                        {% for error in form.name.errors %}
+                                        <small class="text-danger">{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        {{ form.email(class="form-control", id="floatingEmail", placeholder="Ваш email") }}
+                                        <label for="floatingEmail">Ваш email</label>
+                                        {% for error in form.email.errors %}
+                                        <small class="text-danger">{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-floating mb-3">
+                                {{ form.subject(class="form-control", id="floatingSubject", placeholder="Тема сообщения") }}
+                                <label for="floatingSubject">Тема сообщения</label>
+                                {% for error in form.subject.errors %}
+                                <small class="text-danger">{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="form-floating mb-3">
+                                {{ form.message(class="form-control", id="floatingMessage", style="height: 120px", placeholder="Ваше сообщение") }}
+                                <label for="floatingMessage">Ваше сообщение</label>
+                                {% for error in form.message.errors %}
+                                <small class="text-danger">{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="d-grid">
+                                {{ form.submit(class="btn btn-primary") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call To Action -->
+<section class="py-5 text-center text-white call-to-action">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="mb-3">Готовы начать инвестировать?</h2>
+                <p class="lead mb-4">Присоединяйтесь к тысячам инвесторов, которые уже получают стабильный доход с помощью нашей платформы.</p>
+                <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-user-plus me-2"></i>Создать аккаунт
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

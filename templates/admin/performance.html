@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика производительности{% endblock admin_content %}
+
+{% block admin_content %}
+<div class="container py-5">
+    <h1 class="mb-4">Статистика производительности</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Общая статистика</h5>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th>Всего запросов:</th>
+                                <td>{{ total_requests }}</td>
+                            </tr>
+                            <tr>
+                                <th>Медленных запросов (>500мс):</th>
+                                <td>{{ slow_requests }}</td>
+                            </tr>
+                            <tr>
+                                <th>Процент медленных запросов:</th>
+                                <td>
+                                    {% if total_requests > 0 %}
+                                        {{ (slow_requests / total_requests * 100)|round(2) }}%
+                                    {% else %}
+                                        0%
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <form action="{{ url_for('reset_performance_stats') }}" method="post" class="mt-3">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-sync-alt me-2"></i>Сбросить статистику
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title mb-4">Статистика по маршрутам</h5>
+            
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Маршрут</th>
+                            <th>Количество запросов</th>
+                            <th>Среднее время</th>
+                            <th>Минимальное время</th>
+                            <th>Максимальное время</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for route in routes %}
+                        <tr>
+                            <td>{{ route.route }}</td>
+                            <td>{{ route.count }}</td>
+                            <td>{{ route.avg_time }}</td>
+                            <td>{{ route.min_time }}</td>
+                            <td>{{ route.max_time }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock admin_content %}

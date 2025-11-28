@@ -1,0 +1,183 @@
+/* Мобильная адаптация для TrustLendX */
+
+/* Общие правила для всех устройств */
+html {
+    font-size: 16px;
+}
+
+/* Глобальные настройки для адаптивности */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Настройки для маленьких устройств (телефоны, 576px и меньше) */
+@media (max-width: 576px) {
+    html {
+        font-size: 14px;
+    }
+    
+    /* Уменьшение отступов на мобильных */
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    /* Адаптация заголовков */
+    h1, .h1 {
+        font-size: 1.8rem !important;
+    }
+    
+    h2, .h2 {
+        font-size: 1.5rem !important;
+    }
+    
+    /* Кнопки занимают всю ширину на мобильных */
+    .btn-block-sm {
+        display: block;
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Навигация */
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+    
+    /* Счетчики транзакций на главной странице */
+    .transaction-counter {
+        margin-bottom: 1rem;
+    }
+    
+    /* Таблицы на мобильных */
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+    
+    /* Карточки на мобильных */
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    /* FAQ аккордеон */
+    .accordion-button {
+        padding: 0.75rem;
+        font-size: 0.95rem;
+    }
+    
+    /* Форма входа и регистрации */
+    .auth-form {
+        padding: 1.5rem !important;
+    }
+    
+    /* Исправление отступов у кнопок */
+    .btn-sm, .btn-group-sm > .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    /* Footer */
+    footer {
+        text-align: center;
+    }
+    
+    /* Контактная форма */
+    .contact-form {
+        padding: 1rem !important;
+    }
+}
+
+/* Настройки для средних устройств (планшеты, от 576px до 992px) */
+@media (min-width: 577px) and (max-width: 991px) {
+    /* Строки с несколькими кнопками и счетчиками */
+    .row-buttons .btn {
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Адаптация панели инвестора */
+    .investor-panel .card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Исправления для сафари и iOS */
+@supports (-webkit-overflow-scrolling: touch) {
+    /* iOS-specific fixes */
+    select, textarea, input[type="text"], input[type="password"],
+    input[type="datetime"], input[type="datetime-local"],
+    input[type="date"], input[type="month"], input[type="time"],
+    input[type="week"], input[type="number"], input[type="email"],
+    input[type="url"], input[type="search"], input[type="tel"],
+    input[type="color"] {
+        font-size: 16px !important; /* Предотвращает масштабирование при фокусе на iOS */
+    }
+}
+
+/* Таблица транзакций на главной странице */
+@media (max-width: 768px) {
+    .transactions-table td, .transactions-table th {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.85rem;
+    }
+    
+    .transactions-container {
+        padding: 1rem;
+    }
+    
+    /* Скрываем менее важные колонки на мобильных */
+    .transactions-table .hide-on-mobile {
+        display: none;
+    }
+    
+    /* Ускоряем анимацию на мобильных для лучшей производительности */
+    .transaction-row-new {
+        animation-duration: 1s;
+    }
+}
+
+/* Адаптация дашборда инвестора */
+@media (max-width: 768px) {
+    .dashboard-stats .stat-card {
+        margin-bottom: 1rem;
+    }
+    
+    .dashboard-chart-container {
+        height: 200px !important;
+    }
+    
+    .dashboard-table th, .dashboard-table td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* Адаптация форм */
+@media (max-width: 576px) {
+    .form-floating > label {
+        font-size: 0.9rem;
+    }
+    
+    .form-select, .form-control {
+        font-size: 0.95rem;
+    }
+    
+    /* Форма депозита */
+    #depositForm .form-group {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Улучшения отзывчивости калькулятора */
+@media (max-width: 768px) {
+    .calculator {
+        padding: 1rem !important;
+    }
+    
+    .calculator .form-label {
+        font-size: 0.9rem;
+    }
+    
+    .calculator-result {
+        padding: 0.75rem !important;
+    }
+}

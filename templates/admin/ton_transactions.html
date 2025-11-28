@@ -1,0 +1,352 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block admin_content %}
+<div class="container mt-4">
+    <div class="card bg-dark text-light">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">Управление TON транзакциями</h2>
+            <a href="{{ url_for('admin_ton_transactions_buttons') }}" class="btn btn-success">
+                <i class="fas fa-th-large me-1"></i> Упрощенный вид
+            </a>
+        </div>
+        <div class="card-body">
+            <!-- Упрощенная форма поиска -->
+            <div class="mb-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <form id="memo-search-form" onsubmit="event.preventDefault(); filterTransactionsByMemo(document.getElementById('memo-search').value.trim());">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" id="memo-search" class="form-control" placeholder="Поиск по MEMO">
+                                <button class="btn btn-primary" type="submit" id="memo-search-button">
+                                    Найти
+                                </button>
+                                <button class="btn btn-secondary" type="button" id="memo-search-clear" onclick="document.getElementById('memo-search').value = ''; filterTransactionsByMemo('');">
+                                    Сбросить
+                                </button>
+                            </div>
+                            <div class="form-text text-light mt-1">
+                                Введите MEMO для поиска конкретной транзакции
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>MEMO</th>
+                            <th>Пользователь</th>
+                            <th>Сумма</th>
+                            <th>Статус</th>
+                            <th>Дата создания</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-table-body">
+                        {% for tx in transactions %}
+                        <tr class="{% if tx.status == 'completed' %}table-success{% elif tx.status == 'failed' or tx.status == 'cancelled' %}table-danger{% elif tx.status == 'payment_awaiting' %}table-warning{% else %}table-info{% endif %}">
+                            <td>{{ tx.id }}</td>
+                            <td>{{ tx.memo }}</td>
+                            <td>
+                                <a href="{{ url_for('admin_user_details', user_id=tx.user_id) }}">
+                                    {{ user_dict.get(tx.user_id, {}).get('username', 'Пользователь #' + tx.user_id|string) }}
+                                </a>
+                            </td>
+                            <td>{{ tx.amount }} USDT</td>
+                            <td id="status-{{ tx.id }}">
+                                <span class="badge 
+                                    {% if tx.status == 'completed' %}bg-success
+                                    {% elif tx.status == 'failed' %}bg-danger
+                                    {% elif tx.status == 'cancelled' %}bg-danger
+                                    {% elif tx.status == 'payment_awaiting' %}bg-warning
+                                    {% else %}bg-info{% endif %}">
+                                    {% if tx.status == 'completed' %}Завершена
+                                    {% elif tx.status == 'failed' %}Ошибка
+                                    {% elif tx.status == 'cancelled' %}Отменена
+                                    {% elif tx.status == 'payment_awaiting' %}Ожидает оплаты
+                                    {% elif tx.status == 'pending' %}В обработке
+                                    {% else %}{{ tx.status }}{% endif %}
+                                </span>
+                            </td>
+                            <td>{{ tx.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                            <td>
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% if tx.status != 'completed' %}
+                                    <button onclick="updateTonStatus({{ tx.id }}, 'completed')" 
+                                            class="btn btn-sm btn-success" 
+                                            title="Отметить как завершенную">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    {% endif %}
+                                    
+                                    {% if tx.status != 'payment_awaiting' %}
+                                    <button onclick="updateTonStatus({{ tx.id }}, 'payment_awaiting')" 
+                                            class="btn btn-sm btn-warning" 
+                                            title="Отметить как ожидающую оплаты">
+                                        <i class="fas fa-clock"></i>
+                                    </button>
+                                    {% endif %}
+                                    
+                                    {% if tx.status != 'failed' %}
+                                    <button onclick="updateTonStatus({{ tx.id }}, 'failed')" 
+                                            class="btn btn-sm btn-danger" 
+                                            title="Отметить как ошибочную">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock admin_content %}
+
+{% block scripts %}
+<script>
+function updateTonStatus(id, newStatus) {
+    // Отображаем индикатор загрузки
+    const statusCell = document.getElementById('status-' + id);
+    const oldStatusHtml = statusCell.innerHTML;
+    statusCell.innerHTML = '<div class="spinner-border spinner-border-sm text-light" role="status"><span class="visually-hidden">Загрузка...</span></div>';
+    
+    // Создаем данные формы
+    const formData = new FormData();
+    formData.append('status', newStatus);
+    
+    // Отправляем запрос
+    fetch('/admin/ton-transaction/' + id + '/update-status', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Ошибка сервера: ' + response.status);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Успешно обновлен статус:', data);
+        
+        // Определяем класс и текст для нового статуса
+        let badgeClass, statusText;
+        
+        switch(newStatus) {
+            case 'completed':
+                badgeClass = 'bg-success';
+                statusText = 'Завершена';
+                break;
+            case 'payment_awaiting':
+                badgeClass = 'bg-warning';
+                statusText = 'Ожидает оплаты';
+                break;
+            case 'failed':
+                badgeClass = 'bg-danger';
+                statusText = 'Ошибка';
+                break;
+            case 'cancelled':
+                badgeClass = 'bg-danger';
+                statusText = 'Отменена';
+                break;
+            default:
+                badgeClass = 'bg-info';
+                statusText = newStatus;
+        }
+        
+        // Обновляем отображение статуса
+        statusCell.innerHTML = `<span class="badge ${badgeClass}">${statusText}</span>`;
+        
+        // Обновляем класс строки таблицы
+        const rowClass = newStatus === 'completed' ? 'table-success' : 
+                          (newStatus === 'failed' || newStatus === 'cancelled') ? 'table-danger' :
+                          newStatus === 'payment_awaiting' ? 'table-warning' : 'table-info';
+        
+        statusCell.parentNode.className = rowClass;
+        
+        // Обновляем доступные кнопки без перезагрузки страницы
+        const actionsCell = statusCell.parentNode.querySelector('td:last-child');
+        let buttonsHtml = '<div class="d-flex flex-wrap gap-2">';
+        
+        if (newStatus !== 'completed') {
+            buttonsHtml += `<button onclick="updateTonStatus(${id}, 'completed')" 
+                                    class="btn btn-sm btn-success" 
+                                    title="Отметить как завершенную">
+                                <i class="fas fa-check"></i>
+                            </button>`;
+        }
+        
+        if (newStatus !== 'payment_awaiting') {
+            buttonsHtml += `<button onclick="updateTonStatus(${id}, 'payment_awaiting')" 
+                                    class="btn btn-sm btn-warning" 
+                                    title="Отметить как ожидающую оплаты">
+                                <i class="fas fa-clock"></i>
+                            </button>`;
+        }
+        
+        if (newStatus !== 'failed') {
+            buttonsHtml += `<button onclick="updateTonStatus(${id}, 'failed')" 
+                                    class="btn btn-sm btn-danger" 
+                                    title="Отметить как ошибочную">
+                                <i class="fas fa-times"></i>
+                            </button>`;
+        }
+        
+        buttonsHtml += '</div>';
+        actionsCell.innerHTML = buttonsHtml;
+        
+        // Показываем уведомление
+        showNotification('Статус транзакции изменен', 'success');
+    })
+    .catch(error => {
+        console.error('Ошибка при обновлении статуса:', error);
+        statusCell.innerHTML = oldStatusHtml; // Возвращаем старое состояние
+        showNotification('Ошибка при обновлении статуса: ' + error.message, 'danger');
+    });
+}
+
+function showNotification(message, type = 'info') {
+    // Создаем уведомление
+    const notification = document.createElement('div');
+    notification.className = `toast align-items-center text-white bg-${type} border-0`;
+    notification.setAttribute('role', 'alert');
+    notification.setAttribute('aria-live', 'assertive');
+    notification.setAttribute('aria-atomic', 'true');
+    
+    notification.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+    
+    // Добавляем в контейнер для уведомлений (если он не существует, создаем)
+    let container = document.querySelector('.toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'toast-container position-fixed top-0 end-0 p-3';
+        document.body.appendChild(container);
+    }
+    
+    container.appendChild(notification);
+    
+    // Инициализируем и показываем уведомление
+    const toast = new bootstrap.Toast(notification, {
+        autohide: true,
+        delay: 3000
+    });
+    toast.show();
+    
+    // Удаляем после скрытия
+    notification.addEventListener('hidden.bs.toast', function () {
+        notification.remove();
+    });
+}
+
+// Функция фильтрации транзакций по MEMO
+function filterTransactionsByMemo(searchText) {
+    console.log('Начало фильтрации по MEMO. Поисковый запрос:', searchText);
+    
+    const rows = document.querySelectorAll('tbody tr');
+    console.log('Найдено строк для фильтрации:', rows.length);
+    
+    let visibleCount = 0;
+    
+    rows.forEach(row => {
+        const memoCell = row.querySelector('td:nth-child(2)');
+        if (!memoCell) {
+            console.log('Ячейка MEMO не найдена в строке:', row);
+            return;
+        }
+        
+        const memo = memoCell.textContent.trim();
+        console.log('Проверка MEMO:', memo);
+        
+        if (searchText === '' || memo.includes(searchText)) {
+            row.style.display = '';
+            visibleCount++;
+            console.log('Строка видима:', memo);
+        } else {
+            row.style.display = 'none';
+            console.log('Строка скрыта:', memo);
+        }
+    });
+    
+    // Показываем сообщение о результатах поиска
+    console.log('Результат фильтрации. Видимых записей:', visibleCount);
+    if (searchText !== '') {
+        showNotification(`Найдено ${visibleCount} транзакций с MEMO, содержащим "${searchText}"`, 'info');
+    }
+    
+    return visibleCount;
+}
+
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Страница управления TON-транзакциями загружена');
+    
+    // Добавляем обработчики для поиска по MEMO
+    const searchInput = document.getElementById('memo-search');
+    const searchButton = document.getElementById('memo-search-button');
+    const clearButton = document.getElementById('memo-search-clear');
+    
+    console.log('Найдены элементы формы поиска:', {
+        searchInput: searchInput ? 'Да' : 'Нет',
+        searchButton: searchButton ? 'Да' : 'Нет', 
+        clearButton: clearButton ? 'Да' : 'Нет'
+    });
+    
+    if (searchInput && searchButton && clearButton) {
+        console.log('Добавление обработчиков событий для формы поиска...');
+        
+        // Проверка функции поиска кнопкой
+        searchButton.addEventListener('click', function() {
+            console.log('Нажата кнопка поиска');
+            const searchText = searchInput.value.trim();
+            console.log('Текст поиска:', searchText);
+            filterTransactionsByMemo(searchText);
+        });
+        
+        // Обработчик для кнопки сброса
+        clearButton.addEventListener('click', function() {
+            console.log('Нажата кнопка сброса');
+            searchInput.value = '';
+            filterTransactionsByMemo('');
+        });
+        
+        // Обработчик нажатия Enter в поле поиска
+        searchInput.addEventListener('keydown', function(e) {
+            console.log('Нажата клавиша в поле поиска:', e.key);
+            if (e.key === 'Enter') {
+                console.log('Нажат Enter в поле поиска');
+                e.preventDefault();
+                const searchText = searchInput.value.trim();
+                filterTransactionsByMemo(searchText);
+            }
+        });
+        
+        console.log('Обработчики событий успешно добавлены');
+        
+        // Добавим прямой вызов функции для проверки работы фильтрации
+        if (document.querySelectorAll('tbody tr').length > 0) {
+            console.log('Выполняем тестовую фильтрацию...');
+            setTimeout(() => {
+                showNotification('Фильтрация MEMO готова к использованию', 'info');
+            }, 1000);
+        }
+    } else {
+        console.error('Ошибка: Не найдены все элементы формы поиска!');
+        showNotification('Ошибка инициализации формы поиска', 'danger');
+    }
+});
+</script>
+{% endblock admin_content %}

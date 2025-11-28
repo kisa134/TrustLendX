@@ -1,0 +1,441 @@
+{% extends 'base.html' %}
+
+{% block title %}Условия депозитов{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4 text-center">Условия депозитов TrustLendX</h1>
+    
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="card bg-dark border-primary mb-4">
+                <div class="card-header bg-primary bg-opacity-25">
+                    <h3 class="mb-0"><i class="fas fa-info-circle me-2"></i>Общая информация</h3>
+                </div>
+                <div class="card-body">
+                    <p>TrustLendX предлагает гибкие условия инвестирования с защищенными позициями трейдеров, обеспеченными криптовалютой. Вы можете выбрать оптимальный для себя срок и объем инвестиций, получая стабильный пассивный доход.</p>
+                    <p>Все инвестиции хранятся в стейблкоине USDT на блокчейне TON, что обеспечивает максимальную защиту от волатильности рынка.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <h2 class="mb-4 text-center">Типы депозитов</h2>
+    
+    <div class="row mb-5 deposit-cards">
+        <!-- Краткосрочный депозит (7 дней) -->
+        <div class="col-md-4 col-sm-12 mb-4">
+            <div class="card h-100 bg-success bg-opacity-10 border-success mobile-card">
+                <div class="card-header bg-success bg-opacity-25 text-center">
+                    <h3 class="mb-0 text-success">Краткосрочный</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-3">7-дневный депозит</h4>
+                    <ul class="list-group list-group-flush bg-transparent mb-4 mobile-list">
+                        <li class="list-group-item bg-transparent border-success border-opacity-25">
+                            <i class="fas fa-percentage text-success me-2"></i> Доходность: 1.2% в неделю
+                        </li>
+                        <li class="list-group-item bg-transparent border-success border-opacity-25">
+                            <i class="fas fa-dollar-sign text-success me-2"></i> Минимальная сумма: 100 USDT
+                        </li>
+                        <li class="list-group-item bg-transparent border-success border-opacity-25">
+                            <i class="fas fa-calendar-alt text-success me-2"></i> Срок: 7 дней
+                        </li>
+                        <li class="list-group-item bg-transparent border-success border-opacity-25">
+                            <i class="fas fa-calculator text-success me-2"></i> Расчетная дата: Каждый понедельник
+                        </li>
+                        <li class="list-group-item bg-transparent border-success border-opacity-25">
+                            <i class="fas fa-hand-holding-usd text-success me-2"></i> Досрочный вывод: Только тело депозита без прибыли
+                        </li>
+                    </ul>
+                    <p class="card-text">Оптимальный выбор для тех, кто хочет попробовать сервис без долгосрочных обязательств. Идеально подходит для нерегулярного инвестирования.</p>
+                </div>
+                <div class="card-footer bg-success bg-opacity-10 text-center border-success border-opacity-25">
+                    <a href="{% if current_user.is_authenticated %}{{ url_for('dashboard') }}{% else %}{{ url_for('register') }}{% endif %}" class="btn btn-outline-success">Инвестировать</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Среднесрочный депозит (30 дней до 5000 USDT) -->
+        <div class="col-md-4 col-sm-12 mb-4">
+            <div class="card h-100 bg-warning bg-opacity-10 border-warning mobile-card">
+                <div class="card-header bg-warning bg-opacity-25 text-center">
+                    <h3 class="mb-0 text-warning">Среднесрочный</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-3">30-дневный депозит</h4>
+                    <div class="ribbon ribbon-top-right"><span>Популярный</span></div>
+                    <ul class="list-group list-group-flush bg-transparent mb-4 mobile-list">
+                        <li class="list-group-item bg-transparent border-warning border-opacity-25">
+                            <i class="fas fa-percentage text-warning me-2"></i> Доходность: 5% в месяц
+                        </li>
+                        <li class="list-group-item bg-transparent border-warning border-opacity-25">
+                            <i class="fas fa-dollar-sign text-warning me-2"></i> Сумма: 100-5000 USDT
+                        </li>
+                        <li class="list-group-item bg-transparent border-warning border-opacity-25">
+                            <i class="fas fa-calendar-alt text-warning me-2"></i> Срок: 30 дней
+                        </li>
+                        <li class="list-group-item bg-transparent border-warning border-opacity-25">
+                            <i class="fas fa-calculator text-warning me-2"></i> Расчетная дата: На выбор 1,10,20,30 число месяца
+                        </li>
+                        <li class="list-group-item bg-transparent border-warning border-opacity-25">
+                            <i class="fas fa-hand-holding-usd text-warning me-2"></i> Досрочный вывод: Только тело депозита без прибыли
+                        </li>
+                    </ul>
+                    <p class="card-text">Самый популярный вариант инвестирования среди наших клиентов. Оптимальный баланс срока и доходности для регулярных инвестиций.</p>
+                </div>
+                <div class="card-footer bg-warning bg-opacity-10 text-center border-warning border-opacity-25">
+                    <a href="{% if current_user.is_authenticated %}{{ url_for('dashboard') }}{% else %}{{ url_for('register') }}{% endif %}" class="btn btn-outline-warning">Инвестировать</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Среднесрочный депозит (30 дней от 5000 USDT) -->
+        <div class="col-md-4 col-sm-12 mb-4">
+            <div class="card h-100 bg-danger bg-opacity-10 border-danger mobile-card">
+                <div class="card-header bg-danger bg-opacity-25 text-center">
+                    <h3 class="mb-0 text-danger">Среднесрочный от 5000 USDT</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-3">30-дневный депозит</h4>
+                    <ul class="list-group list-group-flush bg-transparent mb-4 mobile-list">
+                        <li class="list-group-item bg-transparent border-danger border-opacity-25">
+                            <i class="fas fa-percentage text-danger me-2"></i> Доходность: 5% в месяц
+                        </li>
+                        <li class="list-group-item bg-transparent border-danger border-opacity-25">
+                            <i class="fas fa-dollar-sign text-danger me-2"></i> Минимальная сумма: от 5000 USDT
+                        </li>
+                        <li class="list-group-item bg-transparent border-danger border-opacity-25">
+                            <i class="fas fa-calendar-alt text-danger me-2"></i> Срок: 30 дней
+                        </li>
+                        <li class="list-group-item bg-transparent border-danger border-opacity-25">
+                            <i class="fas fa-calculator text-danger me-2"></i> Расчетная дата: Любой день в который был внесен депозит
+                        </li>
+                        <li class="list-group-item bg-transparent border-danger border-opacity-25 small">
+                            <i class="fas fa-hand-holding-usd text-danger me-2"></i> Досрочный вывод: Тело+прибыль (если на депозите последние 3 месяца подряд >10000 USDT)
+                        </li>
+                    </ul>
+                    <p class="card-text">Оптимальный вариант для крупных инвесторов с возможностью досрочного вывода без потери прибыли при соблюдении условий.</p>
+                </div>
+                <div class="card-footer bg-danger bg-opacity-10 text-center border-danger border-opacity-25">
+                    <a href="{% if current_user.is_authenticated %}{{ url_for('dashboard') }}{% else %}{{ url_for('register') }}{% endif %}" class="btn btn-outline-danger">Инвестировать</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card bg-dark border-warning">
+                <div class="card-header bg-warning bg-opacity-25">
+                    <h3 class="mb-0"><i class="fas fa-shield-alt me-2 text-warning"></i>"Вывод без потери" - особые условия экстренного вывода средств</h3>
+                </div>
+                <div class="card-body">
+                    <ol class="list-group list-group-flush bg-transparent mobile-list">
+                        <li class="list-group-item bg-transparent">
+                            <strong>Экстренный вывод средств без потери прибыли</strong> доступен при условии, если сумма депозита инвестора не опускалась ниже 10000 USDT в течении 3-х последних месяцев подряд. 
+                            В таком случае заявка на вывод будет обработана в течении 24 часов, пересчитана прибыль с учетом прошедшего срока, и средства (тело+прибыль) инвестора будут переведены на кошелек, указанный в заявке на вывод.
+                        </li>
+                        <li class="list-group-item bg-transparent">
+                            <strong>Экстренный вывод депозита</strong> инвестора, который не соблюдал условия "Вывод без потери", происходит с потерей прибыли. Инвестору возвращается только тело депозита без прибыли. Порядок вывода тот же: 
+                            <ol class="ms-4 mt-2">
+                                <li>Заявка на вывод.</li>
+                                <li>Обработка заявки до 24 часов.</li>
+                                <li>Перевод на кошелек, указанный в заявке на вывод.</li>
+                            </ol>
+                        </li>
+                        <li class="list-group-item bg-transparent">
+                            <strong>Срочная экстренная заявка на вывод</strong> обрабатывается в течении 30 минут после оформления заявки с удержанием 10% от тела депозита.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <h2 class="mb-4 text-center">Условия экстренного вывода средств</h2>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card bg-dark">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mobile-transform">
+                            <thead>
+                                <tr>
+                                    <th>Тип депозита</th>
+                                    <th>Условия вывода</th>
+                                    <th>Результат</th>
+                                    <th>Срок обработки</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="table-success">
+                                    <td data-label="Тип депозита">7-дневный</td>
+                                    <td data-label="Условия вывода">В любой момент</td>
+                                    <td data-label="Результат">Только тело депозита</td>
+                                    <td data-label="Срок обработки">До 24 часов</td>
+                                </tr>
+                                <tr class="table-warning">
+                                    <td data-label="Тип депозита">30-дневный (до 10000 USDT)</td>
+                                    <td data-label="Условия вывода">В любой момент</td>
+                                    <td data-label="Результат">Только тело депозита</td>
+                                    <td data-label="Срок обработки">До 24 часов</td>
+                                </tr>
+                                <tr class="table-danger">
+                                    <td data-label="Тип депозита">30-дневный (от 10000 USDT)</td>
+                                    <td data-label="Условия вывода">В любой момент</td>
+                                    <td data-label="Результат">Тело + прибыль</td>
+                                    <td data-label="Срок обработки">До 24 часов</td>
+                                </tr>
+                                <tr>
+                                    <td data-label="Тип депозита">Любой тип</td>
+                                    <td data-label="Условия вывода">Срочный вывод</td>
+                                    <td data-label="Результат">Тело - 10%</td>
+                                    <td data-label="Срок обработки">До 30 минут</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <div class="card bg-dark border-info mb-4">
+                <div class="card-header bg-info bg-opacity-25">
+                    <h3 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Важная информация</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush bg-transparent mobile-list">
+                        <li class="list-group-item bg-transparent">
+                            <i class="fas fa-check-circle text-success me-2"></i> Для вывода средств необходимо отправить запрос через личный кабинет в разделе "Мои инвестиции".
+                        </li>
+                        <li class="list-group-item bg-transparent">
+                            <i class="fas fa-check-circle text-success me-2"></i> Все запросы на вывод средств обрабатываются администрацией в порядке очереди.
+                        </li>
+                        <li class="list-group-item bg-transparent">
+                            <i class="fas fa-check-circle text-success me-2"></i> Минимальная сумма для вывода составляет 5 USDT.
+                        </li>
+                        <li class="list-group-item bg-transparent">
+                            <i class="fas fa-check-circle text-success me-2"></i> Вывод средств осуществляется в USDT (TON).
+                        </li>
+                        <li class="list-group-item bg-transparent">
+                            <i class="fas fa-exclamation-circle text-warning me-2"></i> Для более детальной информации об условиях досрочного вывода средств обратитесь в службу поддержки.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- FAQ по депозитам -->
+    <div class="row mt-4 mb-5">
+        <div class="col-md-12">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h3 class="mb-0"><i class="fas fa-question-circle me-2"></i>Часто задаваемые вопросы</h3>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="depositFAQ">
+                        <div class="accordion-item bg-dark">
+                            <h4 class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    Как начисляется прибыль по депозиту?
+                                </button>
+                            </h4>
+                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#depositFAQ">
+                                <div class="accordion-body">
+                                    Прибыль начисляется по окончании срока депозита. Для депозитов длительностью от 1 месяца применяется система сложного процента, что позволяет увеличить итоговую доходность.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item bg-dark">
+                            <h4 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    Можно ли увеличить сумму существующего депозита?
+                                </button>
+                            </h4>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#depositFAQ">
+                                <div class="accordion-body">
+                                    Нет, увеличить сумму существующего депозита нельзя. Если вы хотите инвестировать дополнительные средства, необходимо создать новый депозит. Это позволяет более гибко управлять инвестициями и сроками.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item bg-dark">
+                            <h4 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    Что происходит по окончании срока депозита?
+                                </button>
+                            </h4>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#depositFAQ">
+                                <div class="accordion-body">
+                                    По окончании срока депозита вы получаете полную сумму депозита вместе с начисленной прибылью. Вы можете либо вывести все средства, либо реинвестировать их в новый депозит, потенциально получив более выгодные условия благодаря увеличенной сумме.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item bg-dark">
+                            <h4 class="accordion-header" id="headingFour">
+                                <button class="accordion-button collapsed bg-dark text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    Существует ли максимальная сумма депозита?
+                                </button>
+                            </h4>
+                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#depositFAQ">
+                                <div class="accordion-body">
+                                    Для стандартных депозитов максимальная сумма не ограничена. Однако, для депозитов свыше 50,000 USDT мы рекомендуем связаться с нашей командой поддержки для разработки индивидуальных условий, которые могут включать повышенные процентные ставки и особый режим обслуживания.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Стиль для ленточки "Популярный" */
+.ribbon {
+  position: absolute;
+  z-index: 1;
+  overflow: hidden;
+  width: 75px; 
+  height: 75px;
+  text-align: right;
+}
+
+.ribbon span {
+  font-size: 10px;
+  font-weight: bold;
+  color: #FFF;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 20px;
+  transform: rotate(45deg);
+  width: 100px;
+  display: block;
+  background: #F39C12;
+  box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+  position: absolute;
+  top: 19px; 
+  right: -21px;
+}
+
+.ribbon-top-right {
+  top: 0;
+  right: 0;
+}
+
+.ribbon-top-right span {
+  left: -10px;
+  top: 15px;
+  transform: rotate(45deg);
+}
+
+/* Стили для мобильной таблицы */
+@media (max-width: 768px) {
+  /* Стили для заголовков */
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.3rem;
+  }
+  
+  h4 {
+    font-size: 1.1rem;
+  }
+  
+  /* Адаптивные карточки депозитов */
+  .card {
+    margin-bottom: 20px;
+  }
+  
+  .card-body {
+    padding: 0.8rem;
+  }
+  
+  .list-group-item {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Оптимизация отображения в карточках на малых экранах */
+  .small {
+    font-size: 0.8rem;
+    line-height: 1.3;
+  }
+  
+  /* Оптимизация аккордеона для мобильных устройств */
+  .accordion-button {
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+  
+  .accordion-body {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Мобильная оптимизация текста в карточках */
+  .card-text {
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  
+  /* Улучшение отображения иконок */
+  .fas {
+    width: 16px;
+    text-align: center;
+    margin-right: 8px !important;
+  }
+  
+  /* Стили для таблицы */
+  .mobile-transform thead {
+    display: none;
+  }
+  
+  .mobile-transform tr {
+    display: block;
+    margin-bottom: 15px;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+    border-radius: 5px;
+  }
+  
+  .mobile-transform td {
+    display: block;
+    text-align: right;
+    position: relative;
+    padding-left: 50% !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+  
+  .mobile-transform td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 12px;
+    font-weight: bold;
+    text-align: left;
+  }
+  
+  /* Улучшение отображения списков на мобильных устройствах */
+  ol, ul {
+    padding-left: 1.25rem;
+  }
+  
+  /* Оптимизация кнопок */
+  .btn {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+</style>
+{% endblock %}

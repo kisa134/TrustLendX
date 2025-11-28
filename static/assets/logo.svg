@@ -1,0 +1,12 @@
+<svg width="200" height="50" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+  <!-- Coin stack icon -->
+  <circle cx="25" cy="25" r="20" fill="#4682B4" />
+  <circle cx="25" cy="25" r="15" fill="#5F9EA0" />
+  <circle cx="25" cy="25" r="10" fill="#6495ED" />
+  <rect x="22" y="10" width="6" height="30" fill="#F8F9FA" />
+  <rect x="10" y="22" width="30" height="6" fill="#F8F9FA" />
+  
+  <!-- Text -->
+  <text x="55" y="30" font-family="Arial, sans-serif" font-weight="bold" font-size="20" fill="#F8F9FA">CryptoFund</text>
+  <text x="55" y="42" font-family="Arial, sans-serif" font-weight="normal" font-size="10" fill="#CED4DA">Investment Platform</text>
+</svg>

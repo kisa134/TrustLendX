@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Проверка AML - TrustLendX{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">AML-проверка криптокошелька</h3>
+        </div>
+        <div class="card-body p-4">
+            <form id="aml-check-form" method="POST" action="{{ url_for('aml_check_simple') }}">
+                {{ form.hidden_tag() if form else '' }}
+                <div class="row mb-4">
+                    <div class="col-lg-8">
+                        <label for="wallet-address" class="form-label">Адрес криптокошелька</label>
+                        <input type="text" class="form-control" id="wallet-address" name="wallet_address" placeholder="Введите адрес для проверки" value="{{ address or '' }}">
+                        <div class="form-text">Например: 0x71C7656EC7ab88b098defB751B7401B5f6d8976F</div>
+                    </div>
+                    <div class="col-lg-4">
+                        <label for="blockchain" class="form-label">Блокчейн</label>
+                        <select class="form-select" id="blockchain" name="blockchain">
+                            <option value="Bitcoin (BTC)" {% if currency == 'Bitcoin (BTC)' %}selected{% endif %}>Bitcoin (BTC)</option>
+                            <option value="Ethereum (ETH)" {% if currency == 'Ethereum (ETH)' %}selected{% endif %}>Ethereum (ETH)</option>
+                            <option value="Tron (TRX)" {% if currency == 'Tron (TRX)' %}selected{% endif %}>Tron (TRX)</option>
+                            <option value="Binance Smart Chain (BSC)" {% if currency == 'Binance Smart Chain (BSC)' %}selected{% endif %}>Binance Smart Chain (BSC)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row align-items-center">
+                    <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search me-2"></i> Проверить адрес
+                        </button>
+                    </div>
+                    <div class="col-lg-8 col-md-6">
+                        <!-- Для десктопа -->
+                        <div class="d-none d-lg-flex justify-content-between px-2">
+                            <div>
+                                <small class="text-muted">Стоимость проверки:</small>
+                                <strong class="ms-2"><s>3$</s> <span class="text-success">1$</span></strong>
+                            </div>
+                            <div>
+                                <small class="text-muted">Для инвесторов:</small>
+                                <strong class="ms-2 text-success">Бесплатно</strong>
+                            </div>
+                            <div>
+                                <a href="{{ url_for('aml_check') }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-info-circle me-1"></i> Подробнее
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Для мобильных устройств -->
+                        <div class="d-flex d-lg-none justify-content-between px-2">
+                            <div>
+                                <small class="text-muted">Цена: <strong class="text-success">1$</strong></small>
+                            </div>
+                            <div>
+                                <small class="text-muted">Инвесторам: <strong class="text-success">0$</strong></small>
+                            </div>
+                            <div>
+                                <a href="{{ url_for('aml_check') }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    {% if error %}
+    <div class="alert alert-danger mt-4">
+        <i class="fas fa-exclamation-triangle me-2"></i> {{ error }}
+    </div>
+    {% endif %}
+    
+    {% if result and result.success %}
+    <div class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-{{ result.color }} text-white">
+            <h3 class="mb-0">
+                <i class="fas {% if result.risk_level == 'low' %}fa-check-circle{% elif result.risk_level == 'medium' %}fa-exclamation-circle{% else %}fa-times-circle{% endif %} me-2"></i>
+                Результат проверки: {{ result.verdict }}
+            </h3>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="risk-indicator mb-2" style="width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: var(--bs-{{ result.color }}); color: white;">
+                            <div class="text-center">
+                                <h1 class="mb-0">{{ result.risk_score }}</h1>
+                                <small>из 100</small>
+                            </div>
+                        </div>
+                        <span class="mt-1 fs-6">Оценка риска</span>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <h5 class="mb-3">Проверенный адрес:</h5>
+                    <div class="bg-dark p-2 rounded mb-3">
+                        <code class="text-light">{{ result.address }}</code>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p><strong>Блокчейн:</strong> {{ result.currency }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p><strong>Время проверки:</strong> {{ result.check_time }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <hr>
+            
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <h5 class="mb-3">Выявленные риски:</h5>
+                    {% if result.risk_triggers and result.risk_triggers|length > 0 %}
+                        <ul class="list-group">
+                            {% for risk in result.risk_triggers %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ risk.name }}
+                                    <span class="badge bg-danger rounded-pill">{{ risk.risk }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">Рисков не обнаружено</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <h5 class="mb-3">Рекомендации:</h5>
+                    <ul class="list-group">
+                        {% for rec in result.recommendations %}
+                            <li class="list-group-item">
+                                <i class="fas fa-info-circle me-2 text-{{ result.color }}"></i> {{ rec }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-between">
+                <button class="btn btn-outline-secondary" onclick="window.print()">
+                    <i class="fas fa-print me-2"></i> Распечатать отчет
+                </button>
+                <button class="btn btn-primary" onclick="location.href='{{ url_for('aml_check_simple') }}'">
+                    <i class="fas fa-search me-2"></i> Новая проверка
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // JavaScript для страницы AML-проверки
+</script>
+{% endblock %}

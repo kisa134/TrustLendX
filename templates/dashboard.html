@@ -1,0 +1,1111 @@
+{% extends "base.html" %}
+
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-md-7">
+            <h1 class="fw-bold">Личный кабинет</h1>
+            <p class="text-muted">Добро пожаловать, {{ user.username }}!</p>
+        </div>
+        <div class="col-md-5 text-md-end">
+            {% if user.is_admin %}
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-dark me-2">
+                <i class="fas fa-user-shield me-1"></i> Админ-панель
+            </a>
+            {% endif %}
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger me-2">
+                <i class="fas fa-sign-out-alt me-1"></i> Выход
+            </a>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tonDepositModal">
+                <i class="fas fa-wallet me-2"></i> Пополнить депозит <span class="badge bg-light text-primary">TON</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Balance Overview -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3 mb-md-0">
+            <div class="card border-0 shadow-sm balance-card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Общий баланс</h6>
+                    <h3 class="mb-0">{{ total_balance|default('0.00', true) }} USDT</h3>
+                    <div class="small text-muted mt-2">
+                        <i class="fas fa-calendar-alt me-1"></i> Последнее обновление
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn btn-outline-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#withdrawalModal">
+                            <i class="fas fa-credit-card me-1"></i> Вывести средства
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-3 mb-md-0">
+            <div class="card border-0 shadow-sm balance-card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Активные вклады</h6>
+                    <h3 class="mb-0">{{ active_investments_count|default('0', true) }}</h3>
+                    <div class="small text-muted mt-2">
+                        <i class="fas fa-info-circle me-1"></i> Текущие инвестиции
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm balance-card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Ожидаемая прибыль</h6>
+                    <h3 class="mb-0">{{ expected_profit|round(2) }} USDT</h3>
+                    <div class="small text-muted mt-2">
+                        <i class="fas fa-chart-line me-1"></i> На основе текущих вкладов
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard Tabs -->
+    <ul class="nav nav-pills mb-4" id="dashboardTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="overview-tab" data-bs-toggle="pill" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">
+                <i class="fas fa-chart-pie me-2"></i>Обзор
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="withdraw-tab" data-bs-toggle="pill" data-bs-target="#withdraw" type="button" role="tab" aria-controls="withdraw" aria-selected="false">
+                <i class="fas fa-money-bill-wave me-2"></i>Вывод средств
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="referral-tab" data-bs-toggle="pill" data-bs-target="#referral" type="button" role="tab" aria-controls="referral" aria-selected="false">
+                <i class="fas fa-users me-2"></i>Реферальная программа
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="security-tab" data-bs-toggle="pill" data-bs-target="#security" type="button" role="tab" aria-controls="security" aria-selected="false">
+                <i class="fas fa-shield-alt me-2"></i>Безопасность
+            </button>
+        </li>
+    </ul>
+    
+    <div class="tab-content" id="dashboardTabsContent">
+        <!-- Overview Tab -->
+        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+            <!-- Profit Calculator -->
+            <div class="row mb-4">
+                <div class="col-lg-7 mb-4 mb-lg-0">
+                </div>
+                
+                <div class="col-lg-5 mx-auto">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-transparent border-0">
+                            <h5 class="mb-0">Калькулятор прибыли</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="depositForm" class="mb-3">
+                                <div class="mb-3">
+                                    <label for="amount" class="form-label">Сумма инвестиции (USDT)</label>
+                                    <input type="number" class="form-control" id="amount" min="10" value="1000">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="term_type" class="form-label">Тип срока</label>
+                                    <select class="form-select" id="term_type">
+                                        <option value="weeks">Недели</option>
+                                        <option value="months" selected>Месяцы</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3" id="weeks_select_container" style="display: none;">
+                                    <label for="term_weeks" class="form-label">Срок (в неделях)</label>
+                                    <select class="form-select" id="term_weeks">
+                                        <option value="1">1 неделя - 2%</option>
+                                        <option value="2">2 недели - 4.2%</option>
+                                        <option value="3">3 недели - 7%</option>
+                                        <option value="4">4 недели - 10%</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3" id="months_select_container">
+                                    <label for="term_months" class="form-label">Срок (в месяцах)</label>
+                                    <select class="form-select" id="term_months">
+                                        <option value="1">1 месяц - 10%</option>
+                                        <option value="2">2 месяца - 20%</option>
+                                        <option value="3">3 месяца - 30%</option>
+                                        <option value="4">4 месяца - 40%</option>
+                                        <option value="5">5 месяцев - 50%</option>
+                                        <option value="6" selected>6 месяцев - 60%</option>
+                                        <option value="7">7 месяцев - 70%</option>
+                                        <option value="8">8 месяцев - 80%</option>
+                                        <option value="9">9 месяцев - 90%</option>
+                                        <option value="10">10 месяцев - 100%</option>
+                                        <option value="11">11 месяцев - 110%</option>
+                                        <option value="12">12 месяцев - 120%</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label">Ожидаемая прибыль</label>
+                                        <h4 id="expectedProfit">0.00 USDT</h4>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">Общая сумма</label>
+                                        <h4 id="totalReturn">0.00 USDT</h4>
+                                    </div>
+                                </div>
+                            </form>
+                            
+                            <div class="d-grid gap-2">
+                                <div class="btn-group w-100">
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tonDepositModal">
+                                        <i class="fas fa-plus-circle me-2"></i> Пополнить депозит <span class="badge bg-light text-primary">TON</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Transaction History -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">История транзакций</h5>
+                    <div class="badge bg-primary">{{ combined_transactions|length }} Всего</div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive transaction-list">
+                        <table class="table table-hover mb-0 mobile-transform">
+                            <thead>
+                                <tr>
+                                    <th>ID транзакции</th>
+                                    <th>Дата</th>
+                                    <th>Сумма</th>
+                                    <th>Срок</th>
+                                    <th>Ожид. прибыль</th>
+                                    <th>Статус</th>
+                                    <th>Тип</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if combined_transactions %}
+                                    {% for transaction in combined_transactions %}
+                                        <tr>
+                                            <td>{{ transaction.transaction_id }}</td>
+                                            <td>{{ transaction.date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                            <td>{{ transaction.amount }} USDT</td>
+                                            <td>{{ transaction.term }} {{ transaction.term_type }}</td>
+                                            <td>{{ transaction.expected_profit|round(2) }} USDT</td>
+                                            <td>
+                                                {% if transaction.status == 'completed' %}
+                                                    <span class="badge bg-success">Завершено</span>
+                                                {% elif transaction.status == 'pending' %}
+                                                    <span class="badge bg-warning">В обработке</span>
+                                                {% elif transaction.status == 'payment_awaiting' %}
+                                                    <span class="badge bg-info">Ожидает оплаты</span>
+                                                {% elif transaction.status == 'failed' %}
+                                                    <span class="badge bg-danger">Ошибка</span>
+                                                {% elif transaction.status == 'cancelled' %}
+                                                    <span class="badge bg-secondary">Отменено</span>
+                                                {% elif transaction.status == 'expired' %}
+                                                    <span class="badge bg-warning">Просрочено</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ transaction.status }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if transaction.type == 'regular' %}
+                                                    <span class="badge bg-secondary">Стандартный</span>
+                                                {% elif transaction.type == 'ton' %}
+                                                    <span class="badge bg-primary">TON</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ transaction.type }}</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <div class="py-3">
+                                                <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                                                <h6>Транзакций пока нет</h6>
+                                                <p class="text-muted mb-0">Ваша история транзакций появится здесь</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Withdraw Tab -->
+        <div class="tab-pane fade" id="withdraw" role="tabpanel" aria-labelledby="withdraw-tab">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-transparent">
+                            <h5 class="mb-0">Вывод средств</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i> Заявки на вывод средств обрабатываются в течение 24 часов. Минимальная сумма для вывода: 5 USDT.
+                            </div>
+                            
+                            <form id="withdrawForm" action="{{ url_for('withdrawal_routes.create_withdrawal_request') }}" method="POST">
+                                {{ withdrawal_form.hidden_tag() }}
+                                <div class="mb-3">
+                                    <label for="amount" class="form-label">Сумма для вывода (USDT)</label>
+                                    {{ withdrawal_form.amount(class="form-control", placeholder="Введите сумму", min="5", max=total_balance|default('0', true)) }}
+                                    <div class="form-text">
+                                        Доступно: {{ total_balance|default('0.00', true) }} USDT
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="wallet_address" class="form-label">USDT Адрес кошелька (TON)</label>
+                                    {{ withdrawal_form.wallet_address(class="form-control", placeholder="Введите адрес кошелька TON") }}
+                                    <div class="form-text">
+                                        Убедитесь, что указанный адрес поддерживает сеть TON
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="memo" class="form-label">Комментарий (опционально)</label>
+                                    {{ withdrawal_form.memo(class="form-control", rows="2", placeholder="Комментарий к выводу") }}
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    {{ withdrawal_form.submit(class="btn btn-primary") }}
+                                </div>
+                            </form>
+                            
+                            <hr class="my-4">
+                            
+                            <h6 class="mb-3">История выводов</h6>
+                            {% if withdrawal_requests %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover mobile-transform">
+                                        <thead>
+                                            <tr>
+                                                <th>Дата</th>
+                                                <th>Сумма</th>
+                                                <th>Статус</th>
+                                                <th>Сеть</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for withdrawal in withdrawal_requests %}
+                                            <tr>
+                                                <td>{{ withdrawal.request_date.strftime('%d.%m.%Y') }}</td>
+                                                <td>{{ withdrawal.amount }} USDT</td>
+                                                <td>
+                                                    {% if withdrawal.status == 'pending' %}
+                                                        <span class="badge bg-warning">Ожидание</span>
+                                                    {% elif withdrawal.status == 'approved' %}
+                                                        <span class="badge bg-info">Одобрено</span>
+                                                    {% elif withdrawal.status == 'completed' %}
+                                                        <span class="badge bg-success">Выполнено</span>
+                                                    {% elif withdrawal.status == 'rejected' %}
+                                                        <span class="badge bg-danger">Отклонено</span>
+                                                    {% else %}
+                                                        <span class="badge bg-secondary">{{ withdrawal.status }}</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ withdrawal.network }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="d-flex justify-content-between mt-3">
+                                    <div class="small text-muted">Всего выведено: {{ total_withdrawn|default('0.00', true) }} USDT</div>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-secondary text-center">
+                                    <i class="fas fa-clock fa-2x mb-2"></i>
+                                    <p class="mb-0">У вас пока нет истории выводов</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Referral Tab -->
+        <div class="tab-pane fade" id="referral" role="tabpanel" aria-labelledby="referral-tab">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0">Реферальная программа</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-primary mb-4">
+                        <div class="d-flex">
+                            <div class="me-3">
+                                <i class="fas fa-gift fa-2x text-primary"></i>
+                            </div>
+                            <div>
+                                <h5 class="alert-heading">Приглашайте друзей и зарабатывайте!</h5>
+                                <p class="mb-0">Получайте <strong>20%</strong> от прибыли ваших рефералов. Чем больше людей вы пригласите, тем выше ваш доход!</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle d-inline-block mb-2">
+                                        <i class="fas fa-users fa-2x text-primary"></i>
+                                    </div>
+                                    <h5>Всего рефералов</h5>
+                                    <h3 class="text-primary">{{ user.referrals.count() }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <div class="bg-success bg-opacity-10 p-3 rounded-circle d-inline-block mb-2">
+                                        <i class="fas fa-money-bill-wave fa-2x text-success"></i>
+                                    </div>
+                                    <h5>Заработано</h5>
+                                    <h3 class="text-success">{{ user.referral_earnings | round(2) }} <small>USDT</small></h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <div class="bg-info bg-opacity-10 p-3 rounded-circle d-inline-block mb-2">
+                                        <i class="fas fa-chart-line fa-2x text-info"></i>
+                                    </div>
+                                    <h5>Заработок с инвестиций</h5>
+                                    <h3 class="text-info">20<small>%</small></h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Ваша реферальная ссылка</h5>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" id="referralLink" value="https://trustlendx.com/ref?code={{ user.referral_code }}" readonly>
+                                <button class="btn btn-outline-primary" type="button" onclick="copyReferralLink()">
+                                    <i class="fas fa-copy"></i> Копировать
+                                </button>
+                            </div>
+                            <div class="d-flex justify-content-center mt-3">
+                                <button class="btn btn-outline-primary me-2" onclick="shareToSocial('twitter')">
+                                    <i class="fab fa-twitter"></i> Twitter
+                                </button>
+                                <button class="btn btn-outline-primary me-2" onclick="shareToSocial('telegram')">
+                                    <i class="fab fa-telegram"></i> Telegram
+                                </button>
+                                <button class="btn btn-outline-primary" onclick="shareToSocial('facebook')">
+                                    <i class="fab fa-facebook"></i> Facebook
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if user.referrals.count() > 0 %}
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Список ваших рефералов</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover mobile-transform">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Пользователь</th>
+                                            <th scope="col">Дата регистрации</th>
+                                            <th scope="col">Статус</th>
+                                            <th scope="col">Ваш доход</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for referral in user.referrals %}
+                                        <tr>
+                                            <td>{{ referral.username }}</td>
+                                            <td>{{ referral.registered_on.strftime('%d.%m.%Y') }}</td>
+                                            <td>
+                                                {% if (referral.get_total_balance() + referral.get_total_withdrawn()) >= 100 %}
+                                                <span class="badge bg-success">Активный</span>
+                                                {% else %}
+                                                <span class="badge bg-warning">Ожидает депозита</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if referral.get_expected_profit() > 0 %}
+                                                {{ (referral.get_expected_profit() * 0.2) | round(2) }} USDT
+                                                {% else %}
+                                                0.00 USDT
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-secondary text-center">
+                        <i class="fas fa-info-circle mb-2"></i>
+                        <p class="mb-0">У вас пока нет рефералов. Поделитесь своей реферальной ссылкой, чтобы начать зарабатывать!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Security Tab -->
+        <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <h5 class="mb-0">Безопасность аккаунта</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-lg-6">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="me-3">
+                                            <span class="bg-primary bg-opacity-10 p-3 rounded-circle d-inline-block">
+                                                <i class="fas fa-lock fa-2x text-primary"></i>
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1">Двухфакторная аутентификация</h5>
+                                            <p class="text-muted mb-0">Дополнительный уровень защиты вашего аккаунта</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="mb-4">Двухфакторная аутентификация (2FA) добавляет дополнительный уровень безопасности, требуя второй этап проверки при входе в аккаунт.</p>
+                                    
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="me-3">
+                                            {% if user.otp_enabled %}
+                                                <span class="badge bg-success py-2 px-3">
+                                                    <i class="fas fa-check me-1"></i> Включено
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-warning py-2 px-3">
+                                                    <i class="fas fa-times me-1"></i> Отключено
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div>
+                                            {% if user.otp_enabled %}
+                                                <a href="{{ url_for('disable_2fa') }}" class="btn btn-outline-danger btn-sm">
+                                                    <i class="fas fa-times-circle me-1"></i> Отключить 2FA
+                                                </a>
+                                            {% else %}
+                                                <a href="{{ url_for('setup_2fa') }}" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-shield-alt me-1"></i> Настроить 2FA
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="alert alert-info mt-3 mb-0">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        {% if user.otp_enabled %}
+                                            Ваша учетная запись защищена двухфакторной аутентификацией. При входе в систему вам будет необходимо ввести код из приложения аутентификатора.
+                                        {% else %}
+                                            Рекомендуем включить двухфакторную аутентификацию для защиты вашего аккаунта от несанкционированного доступа.
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="me-3">
+                                            <span class="bg-warning bg-opacity-10 p-3 rounded-circle d-inline-block">
+                                                <i class="fas fa-key fa-2x text-warning"></i>
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1">Пароль и безопасность</h5>
+                                            <p class="text-muted mb-0">Управление паролем и настройками безопасности</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                            <span>Последний вход в систему</span>
+                                            <span class="text-muted">{{ user.last_auth_attempt.strftime('%d.%m.%Y %H:%M') if user.last_auth_attempt else 'Нет данных' }}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                            <span>Email</span>
+                                            <span class="text-muted">{{ user.email }}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center py-2">
+                                            <span>Пароль</span>
+                                            <span class="text-muted">••••••••</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2">
+                                        <a href="{{ url_for('change_password') }}" class="btn btn-outline-secondary">
+                                            <i class="fas fa-sync-alt me-1"></i> Изменить пароль
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-transparent">
+                            <h5 class="mb-0">История активности</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <span class="bg-success bg-opacity-10 p-2 rounded-circle d-inline-block">
+                                                <i class="fas fa-sign-in-alt text-success"></i>
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">Успешный вход в систему</h6>
+                                            <p class="text-muted small mb-0">{{ user.last_auth_attempt.strftime('%d.%m.%Y %H:%M') if user.last_auth_attempt else 'Нет данных' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-group-item py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <span class="bg-info bg-opacity-10 p-2 rounded-circle d-inline-block">
+                                                <i class="fas fa-user text-info"></i>
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">Регистрация аккаунта</h6>
+                                            <p class="text-muted small mb-0">{{ user.registered_on.strftime('%d.%m.%Y %H:%M') }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Deposit Modal -->
+<div class="modal fade" id="depositModal" tabindex="-1" aria-labelledby="depositModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" id="depositModalLabel">Создать новый вклад</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('create_deposit') }}">
+                    {{ deposit_form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        <div class="form-group">
+                            {{ deposit_form.amount.label(class="form-label") }}
+                            {{ deposit_form.amount(class="form-control" + (" is-invalid" if deposit_form.amount.errors else ""), placeholder="Введите сумму инвестиции") }}
+                            {% if deposit_form.amount.errors %}
+                                {% for error in deposit_form.amount.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-group">
+                            {{ deposit_form.crypto_currency.label(class="form-label") }}
+                            {{ deposit_form.crypto_currency(class="form-select" + (" is-invalid" if deposit_form.crypto_currency.errors else "")) }}
+                            {% if deposit_form.crypto_currency.errors %}
+                                {% for error in deposit_form.crypto_currency.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                            <div class="form-text">
+                                <small>Минимальная сумма: 1 USDT для USDT (TON), 5 TRX для TRX</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-group">
+                            {{ deposit_form.term_type.label(class="form-label") }}
+                            {{ deposit_form.term_type(class="form-select" + (" is-invalid" if deposit_form.term_type.errors else "")) }}
+                            {% if deposit_form.term_type.errors %}
+                                {% for error in deposit_form.term_type.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-group">
+                            {{ deposit_form.term_value.label(class="form-label") }}
+                            {{ deposit_form.term_value(class="form-control" + (" is-invalid" if deposit_form.term_value.errors else ""), placeholder="Укажите срок") }}
+                            {% if deposit_form.term_value.errors %}
+                                {% for error in deposit_form.term_value.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                            <div class="form-text">
+                                <small>Процентные ставки:<br>
+                                {% if user.is_admin %}
+                                <span class="text-danger fw-bold">5 минут: 10% (тестовый режим)</span> | 
+                                {% endif %}
+                                1 неделя: 2% | 2 недели: 4.2% | 3 недели: 7% | 1 месяц: 10% | 3 месяца: 30% | 6 месяцев: 60% | 12 месяцев: 120%</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> После отправки формы вы будете перенаправлены на платежный шлюз NOWPayments для завершения вклада. Вам нужно будет отправить соответствующую сумму в выбранной криптовалюте на указанный адрес кошелька.
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        {{ deposit_form.submit(class="btn btn-primary btn-lg") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TON Deposit Modal -->
+<div class="modal fade" id="tonDepositModal" tabindex="-1" aria-labelledby="tonDepositModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" id="tonDepositModalLabel">Пополнить депозит <span class="badge bg-primary">USDT в сети TON</span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('ton.create_ton_deposit') }}">
+                    {{ ton_deposit_form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        <div class="form-group">
+                            {{ ton_deposit_form.amount.label(class="form-label") }}
+                            {{ ton_deposit_form.amount(class="form-control" + (" is-invalid" if ton_deposit_form.amount.errors else ""), placeholder="Введите сумму инвестиции в USDT") }}
+                            {% if ton_deposit_form.amount.errors %}
+                                {% for error in ton_deposit_form.amount.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                            <div class="form-text">
+                                <small>Минимальная сумма: 100 USDT <span class="badge bg-primary">СЕТЬ TON</span></small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-group">
+                            {{ ton_deposit_form.term_type.label(class="form-label") }}
+                            {{ ton_deposit_form.term_type(class="form-select" + (" is-invalid" if ton_deposit_form.term_type.errors else ""), id="ton_term_type") }}
+                            {% if ton_deposit_form.term_type.errors %}
+                                {% for error in ton_deposit_form.term_type.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-group">
+                            {{ ton_deposit_form.term_value.label(class="form-label") }}
+                            {{ ton_deposit_form.term_value(class="form-control" + (" is-invalid" if ton_deposit_form.term_value.errors else ""), placeholder="Укажите срок", id="ton_term_value") }}
+                            {% if ton_deposit_form.term_value.errors %}
+                                {% for error in ton_deposit_form.term_value.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                            <div class="form-text">
+                                <small id="weeks_rates">Недельные ставки: 1 неделя: 1.20% | 2 недели: 2.41% | 3 недели: 3.64% | 4 недели: 4.88%</small><br>
+                                <small id="months_rates">Месячные ставки: 1 месяц: 5% | 3 месяца: 15.8% | 6 месяцев: 34.0% | 12 месяцев: 79.6%</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> После отправки формы вы будете перенаправлены на страницу с инструкциями для оплаты.
+                        <hr>
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-primary px-3 py-2 me-2">СЕТЬ TON</span>
+                            <strong>Важно!</strong> Отправляйте USDT только через сеть TON, используя приложение Tonkeeper или другой TON-кошелек. Обязательно укажите MEMO-код в комментарии к платежу.
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        {{ ton_deposit_form.submit(class="btn btn-primary btn-lg") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TON Deposits Table -->
+<div class="modal fade" id="tonDepositsModal" tabindex="-1" aria-labelledby="tonDepositsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" id="tonDepositsModalLabel">История пополнений депозита</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Дата создания</th>
+                                <th>Сумма (USDT)</th>
+                                <th>Срок (дней)</th>
+                                <th>MEMO код</th>
+                                <th>Ожид. прибыль</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if ton_deposits %}
+                                {% for deposit in ton_deposits %}
+                                    <tr>
+                                        <td>{{ deposit.id }}</td>
+                                        <td>{{ deposit.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                        <td>{{ deposit.amount }}</td>
+                                        <td>{{ deposit.term_days }}</td>
+                                        <td><code>{{ deposit.memo_code }}</code></td>
+                                        <td>{{ deposit.expected_profit|round(2) }}</td>
+                                        <td>
+                                            {% if deposit.status == 'pending' %}
+                                                <span class="badge bg-warning">Ожидает оплаты</span>
+                                            {% elif deposit.status == 'active' %}
+                                                <span class="badge bg-success">Активный</span>
+                                            {% elif deposit.status == 'completed' %}
+                                                <span class="badge bg-primary">Завершен</span>
+                                            {% elif deposit.status == 'cancelled' %}
+                                                <span class="badge bg-secondary">Отменен</span>
+                                            {% elif deposit.status == 'failed' %}
+                                                <span class="badge bg-danger">Ошибка</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ deposit.status }}</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <div class="py-3">
+                                            <i class="fas fa-wallet fa-3x text-muted mb-3"></i>
+                                            <h6>У вас пока нет пополнений депозита</h6>
+                                            <p class="text-muted mb-0">Нажмите на кнопку "Пополнить депозит" чтобы совершить первое пополнение</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="d-grid gap-2 mt-3">
+                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#tonDepositModal" data-bs-dismiss="modal">
+                        <i class="fas fa-plus-circle me-2"></i> Пополнить депозит <span class="badge bg-light text-primary">TON</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+    // Копирование реферальной ссылки
+    document.getElementById('copyRefLink')?.addEventListener('click', function() {
+        const copyText = document.getElementById('referralLink');
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // Для мобильных устройств
+        
+        navigator.clipboard.writeText(copyText.value);
+        
+        // Анимация для кнопки
+        const button = this;
+        const originalContent = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i>';
+        button.classList.add('btn-success');
+        button.classList.remove('btn-outline-light');
+        
+        setTimeout(() => {
+            button.innerHTML = originalContent;
+            button.classList.remove('btn-success');
+            button.classList.add('btn-outline-light');
+        }, 1500);
+    });
+    
+    // Функция для шеринга в соцсети
+    function shareReferral(platform) {
+        const referralLink = document.getElementById('referralLink').value;
+        const shareText = "Присоединяйтесь к TrustLendX - инвестируйте в крипто-займы и получайте до 10% в месяц!";
+        
+        let shareUrl = '';
+        
+        switch(platform) {
+            case 'twitter':
+                shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(referralLink)}`;
+                break;
+            case 'telegram':
+                shareUrl = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(shareText)}`;
+                break;
+            case 'facebook':
+                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralLink)}&quote=${encodeURIComponent(shareText)}`;
+                break;
+        }
+        
+        if (shareUrl) {
+            window.open(shareUrl, '_blank');
+        }
+        
+        return false; // Предотвращаем действие по умолчанию
+    }
+    
+    // Обработчик для типа срока вклада
+    const termTypeSelect = document.getElementById('term_type');
+    const termValueInput = document.getElementById('term_value');
+    
+    if (termTypeSelect && termValueInput) {
+        termTypeSelect.addEventListener('change', function() {
+            // Устанавливаем стандартные значения
+            if (this.value === 'weeks') {
+                termValueInput.value = '1';
+                // Для недель ограничиваем максимальное значение до 4
+                termValueInput.setAttribute('max', '4');
+            } else if (this.value === 'months') {
+                termValueInput.value = '1';
+                // Для месяцев ограничиваем максимальное значение до 12
+                termValueInput.setAttribute('max', '12');
+            }
+        });
+    }
+    
+    // Обработчик для типа срока TON-депозита
+    const tonTermTypeSelect = document.getElementById('ton_term_type');
+    const tonTermValueInput = document.getElementById('ton_term_value');
+    
+    if (tonTermTypeSelect && tonTermValueInput) {
+        tonTermTypeSelect.addEventListener('change', function() {
+            if (this.value === 'weeks') {
+                // Для недель ограничиваем максимальное значение до 4
+                tonTermValueInput.setAttribute('max', '4');
+                // Если было установлено больше 4 недель, то сбрасываем на 4
+                if (parseInt(tonTermValueInput.value) > 4) {
+                    tonTermValueInput.value = '4';
+                }
+            } else if (this.value === 'months') {
+                // Для месяцев ограничиваем максимальное значение до 12
+                tonTermValueInput.setAttribute('max', '12');
+                // Если было установлено больше 12 месяцев, то сбрасываем на 12
+                if (parseInt(tonTermValueInput.value) > 12) {
+                    tonTermValueInput.value = '12';
+                }
+            }
+        });
+        
+        // При загрузке страницы устанавливаем ограничения
+        if (tonTermTypeSelect.value === 'weeks') {
+            tonTermValueInput.setAttribute('max', '4');
+        } else {
+            tonTermValueInput.setAttribute('max', '12');
+        }
+    }
+    
+    // Обработчик отправки формы вывода
+    // Валидация формы вывода средств перед отправкой
+    document.getElementById('withdrawForm')?.addEventListener('submit', function(event) {
+        const amountInput = document.querySelector('#withdrawForm input[name="amount"]');
+        const addressInput = document.querySelector('#withdrawForm input[name="wallet_address"]');
+        
+        if (!amountInput || !addressInput) return; // Если элементы не найдены
+        
+        const amount = parseFloat(amountInput.value);
+        const address = addressInput.value;
+        
+        if (!amount || amount < 5) {
+            event.preventDefault();
+            alert('Пожалуйста, введите сумму не менее 5 USDT');
+            return false;
+        }
+        
+        if (!address || address.trim() === '') {
+            event.preventDefault();
+            alert('Пожалуйста, введите корректный адрес кошелька');
+            return false;
+        }
+        
+        // Форма валидна, разрешаем отправку
+        return true;
+    });
+</script>
+
+<!-- Модальное окно для вывода средств -->
+<div class="modal fade" id="withdrawalModal" tabindex="-1" aria-labelledby="withdrawalModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="withdrawalModalLabel">Вывод средств</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> Заявки на вывод средств обрабатываются в течение 24 часов. Минимальная сумма для вывода: 5 USDT.
+                </div>
+                
+                <form id="modalWithdrawForm" action="{{ url_for('withdrawal_routes.create_withdrawal_request') }}" method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Сумма для вывода (USDT)</label>
+                        <input type="number" class="form-control" id="amount" name="amount" placeholder="Введите сумму" min="5" max="{{ total_balance|default('0', true) }}" required>
+                        <div class="form-text">
+                            Доступно: {{ total_balance|default('0.00', true) }} USDT
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="wallet_address" class="form-label">USDT Адрес кошелька (TON)</label>
+                        <input type="text" class="form-control" id="wallet_address" name="wallet_address" placeholder="Введите адрес кошелька TON" required>
+                        <div class="form-text">
+                            Убедитесь, что указанный адрес поддерживает сеть TON
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="memo" class="form-label">Комментарий (опционально)</label>
+                        <textarea class="form-control" id="memo" name="memo" rows="2" placeholder="Комментарий к выводу"></textarea>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Отправить запрос</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Скрипты для реферальной системы -->
+<script>
+    // Функция для копирования реферальной ссылки
+    function copyReferralLink() {
+        var referralLink = document.getElementById('referralLink');
+        
+        // Выделяем текст
+        referralLink.select();
+        referralLink.setSelectionRange(0, 99999); // Для мобильных устройств
+        
+        // Копируем текст в буфер обмена
+        navigator.clipboard.writeText(referralLink.value)
+            .then(() => {
+                // Показываем уведомление об успешном копировании
+                const toast = document.createElement('div');
+                toast.className = 'toast align-items-center text-white bg-success border-0 position-fixed bottom-0 end-0 m-3';
+                toast.setAttribute('role', 'alert');
+                toast.setAttribute('aria-live', 'assertive');
+                toast.setAttribute('aria-atomic', 'true');
+                toast.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas fa-check-circle me-2"></i> Ссылка скопирована в буфер обмена!
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                `;
+                
+                document.body.appendChild(toast);
+                const bsToast = new bootstrap.Toast(toast, { autohide: true, delay: 3000 });
+                bsToast.show();
+                
+                // Удаляем уведомление после скрытия
+                toast.addEventListener('hidden.bs.toast', function () {
+                    document.body.removeChild(toast);
+                });
+            })
+            .catch(err => {
+                console.error('Ошибка при копировании: ', err);
+                alert('Не удалось скопировать ссылку. Пожалуйста, скопируйте её вручную.');
+            });
+    }
+    
+    // Функция для шеринга в социальные сети
+    function shareToSocial(platform) {
+        const referralLink = document.getElementById('referralLink').value;
+        const text = 'Присоединяйтесь к TrustLendX и зарабатывайте на инвестициях в криптовалюту вместе со мной!';
+        let shareUrl = '';
+        
+        // Полная ссылка с доменом для шеринга - используем домен из инпута
+        const shareLink = referralLink; // Уже содержит https://trustlendx.com/ref?code=XXX
+        
+        switch(platform) {
+            case 'twitter':
+                shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareLink)}`;
+                break;
+            case 'facebook':
+                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareLink)}&quote=${encodeURIComponent(text)}`;
+                break;
+            case 'telegram':
+                shareUrl = `https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent(text)}`;
+                break;
+            default:
+                console.error('Неизвестная платформа:', platform);
+                return;
+        }
+        
+        // Открываем новое окно для шеринга
+        window.open(shareUrl, '_blank', 'width=600,height=400');
+    }
+    
+    // Инициализация мобильных оптимизаций при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        // Преобразование таблиц в аккордеоны на мобильных устройствах
+        if (typeof initMobileTableTransform === 'function') {
+            initMobileTableTransform();
+        }
+        
+        // Улучшение сенсорного взаимодействия
+        if (typeof initTouchOptimizations === 'function') {
+            initTouchOptimizations();
+        }
+        
+        // Ленивая загрузка изображений
+        if (typeof initLazyLoading === 'function') {
+            initLazyLoading();
+        }
+    });
+</script>
+{% endblock %}

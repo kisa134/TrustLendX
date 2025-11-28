@@ -1,0 +1,33 @@
+<!-- Последние транзакции -->
+<section class="py-5 bg-dark text-white" id="section-transactions" data-section="transactions">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-heading mx-auto">Последние транзакции</h2>
+            <p class="lead text-muted">Инвесторы со всего мира уже используют нашу платформу</p>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Пользователь</th>
+                        <th>Сумма</th>
+                        <th>Тип</th>
+                        <th>Статус</th>
+                        <th>Дата</th>
+                    </tr>
+                </thead>
+                <tbody id="transactions-body">
+                    <!-- Транзакции будут добавляться здесь динамически -->
+                </tbody>
+            </table>
+        </div>
+        <div class="text-center mt-3">
+            <small class="text-muted fst-italic">* Имена пользователей скрыты для обеспечения конфиденциальности</small>
+        </div>
+    </div>
+</section>
+
+<!-- Подключаем скрипт для транзакций -->
+<script src="/static/js/transactions.js"></script>

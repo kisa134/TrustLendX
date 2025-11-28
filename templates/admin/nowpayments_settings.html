@@ -1,0 +1,125 @@
+{% extends "admin/base_admin.html" %}
+
+{% block admin_content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1>Настройки прокси для NOWPayments</h1>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Статус подключения к NOWPayments API</h5>
+                </div>
+                <div class="card-body">
+                    {% if connection_status and connection_status.get('success') %}
+                        <div class="alert alert-success mb-3">
+                            <h5><i class="fas fa-check-circle me-2"></i> API доступен</h5>
+                            <p class="mb-0">{{ connection_status.get('message', 'Соединение с NOWPayments API успешно установлено.') }}</p>
+                            {% if connection_status.get('using_proxy') %}
+                                <p class="mb-0 mt-2"><strong>Используется прокси:</strong> Да</p>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-danger mb-3">
+                            <h5><i class="fas fa-exclamation-triangle me-2"></i> API недоступен</h5>
+                            <p class="mb-0">{{ connection_status.get('message', 'Проблема с соединением к NOWPayments API.') }}</p>
+                            {% if connection_status.get('error') %}
+                                <p class="mb-0 mt-2"><strong>Ошибка:</strong> {{ connection_status.get('error') }}</p>
+                            {% endif %}
+                            {% if connection_status.get('using_proxy') %}
+                                <p class="mb-0"><strong>Используется прокси:</strong> Да</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Настройки прокси-сервера для NOWPayments</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin_nowpayments_settings') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="proxy_enabled" name="proxy_enabled" {% if proxy_enabled %}checked{% endif %}>
+                            <label class="form-check-label" for="proxy_enabled">Использовать прокси-сервер</label>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="proxy_host" class="form-label">Хост прокси</label>
+                                <input type="text" class="form-control" id="proxy_host" name="proxy_host" value="{{ proxy_host }}">
+                                <small class="text-muted">Например: proxy.example.com или IP-адрес</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="proxy_port" class="form-label">Порт прокси</label>
+                                <input type="text" class="form-control" id="proxy_port" name="proxy_port" value="{{ proxy_port }}">
+                                <small class="text-muted">Например: 3128, 8080, 1080</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="proxy_user" class="form-label">Имя пользователя (если требуется)</label>
+                                <input type="text" class="form-control" id="proxy_user" name="proxy_user" value="{{ proxy_user }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="proxy_pass" class="form-label">Пароль (если требуется)</label>
+                                <input type="password" class="form-control" id="proxy_pass" name="proxy_pass" value="{{ proxy_pass }}">
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="mb-3">
+                            <label for="api_key" class="form-label">API-ключ NOWPayments</label>
+                            <div class="form-control-plaintext">
+                                {% if api_key %}
+                                    {{ api_key[:10] + '****' }}
+                                {% else %}
+                                    <span class="text-muted">Не установлен</span>
+                                {% endif %}
+                            </div>
+                            <small class="text-muted">API ключ устанавливается через переменные среды</small>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Сохранить настройки
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Помощь по настройке</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Зачем нужен прокси для NOWPayments?</h6>
+                    <p>NOWPayments API может ограничивать доступ в зависимости от IP-адреса. Использование выделенного прокси-сервера позволяет обеспечить стабильный доступ к API и избежать проблем при смене IP-адреса сервера.</p>
+                    
+                    <h6>Как настроить прокси?</h6>
+                    <ol>
+                        <li>Приобретите доступ к прокси-серверу с выделенным IP-адресом</li>
+                        <li>Укажите хост и порт прокси-сервера в настройках выше</li>
+                        <li>Если прокси требует аутентификации, укажите имя пользователя и пароль</li>
+                        <li>Включите использование прокси, установив соответствующий флажок</li>
+                        <li>Сохраните настройки</li>
+                    </ol>
+                    
+                    <h6>Рекомендации по выбору прокси</h6>
+                    <ul>
+                        <li>Рекомендуется использовать тот же прокси-сервер, что и для GetBlock API</li>
+                        <li>Используйте прокси с выделенным IP-адресом (не общедоступные прокси)</li>
+                        <li>Выбирайте прокси в странах с низким риском блокировки (США, Канада, Западная Европа)</li>
+                        <li>Проверьте, что ваш прокси поддерживает протокол HTTPS</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock admin_content %}

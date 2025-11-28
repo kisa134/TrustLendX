@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Отключение двухфакторной аутентификации{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Отключение 2FA</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Внимание!</strong> Вы собираетесь отключить двухфакторную аутентификацию.
+                    </div>
+                    
+                    <p>Двухфакторная аутентификация обеспечивает дополнительный уровень защиты для вашего аккаунта. Отключив её, вы сделаете свою учетную запись более уязвимой для несанкционированного доступа.</p>
+                    
+                    <p>Вы уверены, что хотите продолжить?</p>
+                    
+                    <form method="post" action="{{ url_for('disable_2fa') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Отмена
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-times-circle me-1"></i> Отключить 2FA
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

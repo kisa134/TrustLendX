@@ -1,0 +1,203 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Детальная информация о транзакции</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <a href="{{ url_for('admin_transactions') }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Вернуться к списку
+                </a>
+                <a href="{{ url_for('admin_user_details', user_id=user.id) }}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-user me-1"></i> Профиль пользователя
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Информация о транзакции -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card bg-dark border-0 shadow-sm h-100">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Основная информация</h6>
+                    <div>
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#updateStatusModal">
+                            <i class="fas fa-edit me-1"></i> Изменить статус
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>ID транзакции:</strong> {{ transaction.transaction_id }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Пользователь:</strong> 
+                        <a href="{{ url_for('admin_user_details', user_id=user.id) }}">
+                            {{ user.username }} (ID: {{ user.id }})
+                        </a>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Сумма:</strong> <span class="text-success">{{ "%.2f"|format(transaction.amount) }} USDT</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Статус:</strong>
+                        {% if transaction.status == 'completed' %}
+                        <span class="badge bg-success">Завершена</span>
+                        {% elif transaction.status == 'pending' %}
+                        <span class="badge bg-secondary">Ожидает</span>
+                        {% elif transaction.status == 'payment_awaiting' %}
+                        <span class="badge bg-warning">Ожидает оплаты</span>
+                        {% elif transaction.status == 'failed' %}
+                        <span class="badge bg-danger">Ошибка</span>
+                        {% elif transaction.status == "archived" %}
+                        <span class="badge bg-info">Архивирована</span>
+                        {% elif transaction.status == 'cancelled' %}
+                        <span class="badge bg-danger">Отменена</span>
+                        {% elif transaction.status == 'archived' %}
+                        <span class="badge bg-info">Архивирована</span>
+                        {% else %}
+                        <span class="badge bg-secondary">{{ transaction.status }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Дата создания:</strong> {{ transaction.created_at.strftime('%d.%m.%Y %H:%M') }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Срок вклада (месяцы):</strong> {{ transaction.term_months }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Дата начала:</strong> 
+                        {% if transaction.deposit_start_date %}
+                        {{ transaction.deposit_start_date.strftime('%d.%m.%Y %H:%M') }}
+                        {% else %}
+                        <span class="text-muted">Не определена</span>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Дата окончания:</strong> 
+                        {% if transaction.deposit_end_date %}
+                        {{ transaction.deposit_end_date.strftime('%d.%m.%Y %H:%M') }}
+                        {% else %}
+                        <span class="text-muted">Не определена</span>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Ожидаемая прибыль:</strong> <span class="text-info">{{ "%.2f"|format(transaction.expected_profit) }} USDT</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-dark border-0 shadow-sm h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Платежная информация</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>ID платежа:</strong> 
+                        {% if transaction.payment_id %}
+                        {{ transaction.payment_id }}
+                        {% else %}
+                        <span class="text-muted">Не определен</span>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Адрес для оплаты:</strong> 
+                        {% if transaction.payment_url %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="{{ transaction.payment_url }}" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('{{ transaction.payment_url }}')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        {% else %}
+                        <span class="text-muted">Не определен</span>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Валюта платежа:</strong> 
+                        {% if transaction.payment_currency %}
+                        {{ transaction.payment_currency }}
+                        {% else %}
+                        <span class="text-muted">Не определена</span>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Сумма в криптовалюте:</strong>
+                        {% if transaction.payment_amount %}
+                        {{ "%.2f"|format(transaction.amount) }} USDT
+                        {% else %}
+                        <span class="text-muted">Не определена</span>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Статус платежа:</strong>
+                        {% if transaction.payment_status %}
+                        <span class="badge bg-info">{{ transaction.payment_status }}</span>
+                        {% else %}
+                        <span class="text-muted">Не определен</span>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Дата завершения платежа:</strong>
+                        {% if transaction.payment_completed_at %}
+                        {{ transaction.payment_completed_at.strftime('%d.%m.%Y %H:%M') }}
+                        {% else %}
+                        <span class="text-muted">Не определена</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для изменения статуса -->
+    <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateStatusModalLabel">Изменить статус транзакции</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ url_for('admin_update_transaction_status', transaction_id=transaction.transaction_id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="statusSelect" class="form-label">Новый статус</label>
+                            <select class="form-select" id="statusSelect" name="status" required>
+                                <option value="archived" {% if transaction.status == "archived" %}selected{% endif %}>Архивирована (archived)</option>
+                                <option value="pending" {% if transaction.status == 'pending' %}selected{% endif %}>Ожидает (pending)</option>
+                                <option value="payment_awaiting" {% if transaction.status == 'payment_awaiting' %}selected{% endif %}>Ожидает оплаты (payment_awaiting)</option>
+                                <option value="completed" {% if transaction.status == 'completed' %}selected{% endif %}>Завершена (completed)</option>
+                                <option value="failed" {% if transaction.status == 'failed' %}selected{% endif %}>Ошибка (failed)</option>
+                                <option value="cancelled" {% if transaction.status == 'cancelled' %}selected{% endif %}>Отменена (cancelled)</option>
+                            </select>
+                        </div>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i> Внимание! Изменение статуса может повлиять на расчеты и доступность средств. Используйте с осторожностью.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock admin_content %}
+
+{% block scripts %}
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        alert('Адрес скопирован в буфер обмена');
+    }, function(err) {
+        console.error('Не удалось скопировать текст: ', err);
+    });
+}
+</script>
+{% endblock admin_content %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Ручная верификация Email - TrustLendX{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Ручная верификация Email</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <p><strong>Внимание!</strong> В данный момент наша система отправки email верификации испытывает технические проблемы.</p>
+                        <p>Вы можете воспользоваться ручной верификацией вашего аккаунта, используя код активации.</p>
+                    </div>
+
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" action="{{ url_for('manual_email_verification') }}">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group mb-3">
+                            <label for="email">Email адрес:</label>
+                            {{ form.email(class="form-control", placeholder="Введите адрес электронной почты, указанный при регистрации") }}
+                            {% if form.email.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.email.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="verification_code">Код активации:</label>
+                            {{ form.verification_code(class="form-control", placeholder="Введите код активации") }}
+                            {% if form.verification_code.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.verification_code.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <button type="submit" class="btn btn-primary">Подтвердить</button>
+                        </div>
+                    </form>
+
+                    <div class="mt-4">
+                        <p>Не получили код активации? <a href="{{ url_for('login') }}">Вернуться на страницу входа</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

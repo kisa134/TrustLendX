@@ -1,0 +1,1554 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block admin_content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4 mb-4">
+        <i class="fas fa-users-cog me-2"></i> Управление реферальной системой
+    </h1>
+    
+    <!-- Вкладки -->
+    <ul class="nav nav-tabs mb-4" id="referralsTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">
+                <i class="fas fa-chart-pie me-2"></i>Обзор
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="referrals-tab" data-bs-toggle="tab" data-bs-target="#referrals" type="button" role="tab" aria-controls="referrals" aria-selected="false">
+                <i class="fas fa-users me-2"></i>Рефералы
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payments" type="button" role="tab" aria-controls="payments" aria-selected="false">
+                <i class="fas fa-money-bill-wave me-2"></i>Выплаты
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">
+                <i class="fas fa-cogs me-2"></i>Настройки
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="analytics-tab" data-bs-toggle="tab" data-bs-target="#analytics" type="button" role="tab" aria-controls="analytics" aria-selected="false">
+                <i class="fas fa-chart-line me-2"></i>Аналитика
+            </button>
+        </li>
+    </ul>
+    
+    <!-- Содержимое вкладок -->
+    <div class="tab-content" id="referralsTabContent">
+        <!-- Вкладка "Обзор" -->
+        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+            <div class="row">
+                <!-- Общая статистика -->
+                <div class="col-md-6">
+                    <div class="card admin-card h-100">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-pie me-2"></i> Общая статистика
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="stats-container p-3">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="stat-item">
+                                            <h6 class="text-muted">Всего рефералов:</h6>
+                                            <h3 class="mb-0">{{ total_referrals }}</h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="stat-item">
+                                            <h6 class="text-muted">Активные рефералы:</h6>
+                                            <h3 class="mb-0">{{ active_referrals }} <small class="text-muted">({{ active_percentage }}%)</small></h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="stat-item">
+                                            <h6 class="text-muted">Общий оборот:</h6>
+                                            <h3 class="mb-0">{{ total_turnover|round(2) }} USDT</h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="stat-item">
+                                            <h6 class="text-muted">Выплачено рефоводам:</h6>
+                                            <h3 class="mb-0">{{ total_paid|round(2) }} USDT</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Текущие настройки -->
+                <div class="col-md-6">
+                    <div class="card admin-card h-100">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-cogs me-2"></i> Действующие настройки
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="settings-container p-3">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="setting-item">
+                                            <h6 class="text-muted">Минимальный депозит:</h6>
+                                            <h3 class="mb-0">{{ settings.min_deposit_amount }} USDT</h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="setting-item">
+                                            <h6 class="text-muted">Процент вознаграждения:</h6>
+                                            <h3 class="mb-0">{{ settings.referral_percentage }}%</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="setting-item">
+                                            <h6 class="text-muted">Статус системы:</h6>
+                                            <h3 class="mb-0">
+                                                {% if settings.active %}
+                                                    <span class="badge bg-success">Активна</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">Отключена</span>
+                                                {% endif %}
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="setting-item">
+                                            <h6 class="text-muted">Последнее обновление:</h6>
+                                            <p class="mb-0">{{ settings.updated_at.strftime('%d.%m.%Y %H:%M') if settings.updated_at else 'Не обновлялось' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Топ рефоводов -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card admin-card">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-trophy me-2"></i> Топ-10 рефоводов
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Имя пользователя</th>
+                                            <th>Email</th>
+                                            <th>Кол-во рефералов</th>
+                                            <th>Действия</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for referrer in top_referrers %}
+                                        <tr>
+                                            <td>{{ referrer.id }}</td>
+                                            <td>{{ referrer.username }}</td>
+                                            <td>{{ referrer.email }}</td>
+                                            <td>{{ referrer.referral_count }}</td>
+                                            <td>
+                                                <a href="{{ url_for('admin_user_details', user_id=referrer.id) }}" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-user me-1"></i> Профиль
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% else %}
+                                        <tr>
+                                            <td colspan="5" class="text-center py-3">Нет данных о рефоводах</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка "Рефералы" -->
+        <div class="tab-pane fade" id="referrals" role="tabpanel" aria-labelledby="referrals-tab">
+            <div class="card admin-card">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users me-2"></i> Список рефералов
+                    </h5>
+                    <div>
+                        <button type="button" class="btn btn-sm btn-outline-light" id="exportReferralsBtn">
+                            <i class="fas fa-file-export me-1"></i> Экспорт CSV
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Фильтры -->
+                    <div class="row mb-4">
+                        <div class="col-md-3 mb-2">
+                            <input type="text" class="form-control" id="referralSearch" placeholder="Поиск по имени/email">
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <select class="form-select" id="referralStatus">
+                                <option value="">Все статусы</option>
+                                <option value="active">Активные</option>
+                                <option value="pending">Ожидающие</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <input type="date" class="form-control" id="referralDateFrom" placeholder="Дата от">
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <input type="date" class="form-control" id="referralDateTo" placeholder="Дата до">
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <div class="d-flex">
+                                <button id="applyReferralFilters" class="btn btn-primary me-2">
+                                    <i class="fas fa-filter me-1"></i> Применить
+                                </button>
+                                <button id="resetReferralFilters" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-1"></i> Сбросить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Таблица рефералов -->
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mobile-transform" id="referralsTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Реферал</th>
+                                    <th>Дата регистрации</th>
+                                    <th>Рефовод</th>
+                                    <th>Депозиты</th>
+                                    <th>Прибыль</th>
+                                    <th>Выплата рефоводу</th>
+                                    <th>Статус</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="9" class="text-center py-3">Загрузка данных...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Пагинация -->
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="d-flex align-items-center">
+                            <label for="referralsPerPage" class="me-2">Показывать по:</label>
+                            <select class="form-select form-select-sm" id="referralsPerPage" style="width: 70px;">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                        <div>
+                            <nav aria-label="Навигация по страницам">
+                                <ul class="pagination mb-0" id="referralsPagination">
+                                    <!-- Пагинация будет добавлена JavaScript -->
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Модальное окно для удаления реферальной связи -->
+            <div class="modal fade" id="removeReferralModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title">Удаление реферальной связи</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Вы действительно хотите удалить реферальную связь для пользователя <strong id="removeReferralUsername"></strong>?</p>
+                            <p>Это действие невозможно отменить. Реферал больше не будет привязан к рефоводу.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                            <button type="button" class="btn btn-danger" id="confirmRemoveReferral">Удалить связь</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка "Выплаты" -->
+        <div class="tab-pane fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
+            <div class="card admin-card">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-money-bill-wave me-2"></i> Выплаты рефоводам
+                    </h5>
+                    <div>
+                        <button type="button" class="btn btn-sm btn-success me-2" id="createPaymentBtn">
+                            <i class="fas fa-plus me-1"></i> Новая выплата
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-light" id="exportPaymentsBtn">
+                            <i class="fas fa-file-export me-1"></i> Экспорт CSV
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Фильтры -->
+                    <div class="row mb-4">
+                        <div class="col-md-3 mb-2">
+                            <input type="text" class="form-control" id="paymentSearch" placeholder="Поиск по имени/email">
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <select class="form-select" id="paymentStatus">
+                                <option value="">Все статусы</option>
+                                <option value="pending">Ожидает</option>
+                                <option value="paid">Оплачено</option>
+                                <option value="canceled">Отменено</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <input type="date" class="form-control" id="paymentDateFrom" placeholder="Дата от">
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <input type="date" class="form-control" id="paymentDateTo" placeholder="Дата до">
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <div class="d-flex">
+                                <button id="applyPaymentFilters" class="btn btn-primary me-2">
+                                    <i class="fas fa-filter me-1"></i> Применить
+                                </button>
+                                <button id="resetPaymentFilters" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-1"></i> Сбросить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Таблица выплат -->
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mobile-transform" id="paymentsTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Рефовод</th>
+                                    <th>Реферал</th>
+                                    <th>Сумма</th>
+                                    <th>Прибыль реферала</th>
+                                    <th>Процент</th>
+                                    <th>Дата создания</th>
+                                    <th>Дата выплаты</th>
+                                    <th>Статус</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="10" class="text-center py-3">Загрузка данных...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Пагинация -->
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="d-flex align-items-center">
+                            <label for="paymentsPerPage" class="me-2">Показывать по:</label>
+                            <select class="form-select form-select-sm" id="paymentsPerPage" style="width: 70px;">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                        <div>
+                            <nav aria-label="Навигация по страницам">
+                                <ul class="pagination mb-0" id="paymentsPagination">
+                                    <!-- Пагинация будет добавлена JavaScript -->
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Модальное окно для создания выплаты -->
+            <div class="modal fade" id="createPaymentModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-success text-white">
+                            <h5 class="modal-title">Создание выплаты</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="createPaymentForm">
+                                <div class="mb-3">
+                                    <label for="referrerSelect" class="form-label">Рефовод</label>
+                                    <select class="form-select" id="referrerSelect" required>
+                                        <option value="">Выберите рефовода</option>
+                                        <!-- Будет заполнено JavaScript -->
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="referralSelect" class="form-label">Реферал</label>
+                                    <select class="form-select" id="referralSelect" required disabled>
+                                        <option value="">Сначала выберите рефовода</option>
+                                        <!-- Будет заполнено JavaScript -->
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="referralProfit" class="form-label">Прибыль реферала</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="referralProfit" min="0" step="0.01" required>
+                                        <span class="input-group-text">USDT</span>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="paymentAmount" class="form-label">Сумма выплаты</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="paymentAmount" min="0" step="0.01" required>
+                                        <span class="input-group-text">USDT</span>
+                                    </div>
+                                    <small class="form-text text-muted">При ставке {{ settings.referral_percentage }}%, рекомендуемая сумма: 
+                                        <span id="recommendedAmount">0</span> USDT
+                                    </small>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="paymentStatus" class="form-label">Статус</label>
+                                    <select class="form-select" id="paymentStatus">
+                                        <option value="pending">Ожидает оплаты</option>
+                                        <option value="paid">Оплачено</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="paymentNotes" class="form-label">Комментарий</label>
+                                    <textarea class="form-control" id="paymentNotes" rows="2"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                            <button type="button" class="btn btn-success" id="savePaymentBtn">Создать выплату</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Модальное окно для обновления статуса выплаты -->
+            <div class="modal fade" id="updatePaymentStatusModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title">Обновление статуса выплаты</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="updatePaymentForm">
+                                <div class="mb-3">
+                                    <label for="updatePaymentStatus" class="form-label">Статус</label>
+                                    <select class="form-select" id="updatePaymentStatus">
+                                        <option value="pending">Ожидает оплаты</option>
+                                        <option value="paid">Оплачено</option>
+                                        <option value="canceled">Отменено</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="updatePaymentNotes" class="form-label">Комментарий</label>
+                                    <textarea class="form-control" id="updatePaymentNotes" rows="2"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                            <button type="button" class="btn btn-primary" id="updatePaymentBtn">Обновить</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка "Настройки" -->
+        <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card admin-card">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-cogs me-2"></i> Настройки реферальной системы
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="referralSettingsForm">
+                                <div class="mb-3">
+                                    <label for="minDepositAmount" class="form-label">Минимальная сумма депозита</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="minDepositAmount" 
+                                               value="{{ settings.min_deposit_amount }}" min="0" step="1" required>
+                                        <span class="input-group-text">USDT</span>
+                                    </div>
+                                    <small class="form-text text-muted">
+                                        Минимальная сумма депозита для учета реферала как активного
+                                    </small>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="referralPercentage" class="form-label">Процент вознаграждения</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="referralPercentage" 
+                                               value="{{ settings.referral_percentage }}" min="0" max="100" step="0.1" required>
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    <small class="form-text text-muted">
+                                        Процент от прибыли реферала, который получает рефовод
+                                    </small>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="referralSystemActive" 
+                                               {% if settings.active %}checked{% endif %}>
+                                        <label class="form-check-label" for="referralSystemActive">
+                                            Реферальная система активна
+                                        </label>
+                                    </div>
+                                    <small class="form-text text-muted">
+                                        Если отключено, новые рефералы не будут учитываться
+                                    </small>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="settingsDescription" class="form-label">Описание изменений</label>
+                                    <textarea class="form-control" id="settingsDescription" rows="2"></textarea>
+                                    <small class="form-text text-muted">
+                                        Укажите причину изменения настроек для истории
+                                    </small>
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" class="btn btn-primary" id="saveSettingsBtn">
+                                        <i class="fas fa-save me-1"></i> Сохранить настройки
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card admin-card h-100">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-history me-2"></i> История изменений
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover mobile-transform">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Дата</th>
+                                            <th>Администратор</th>
+                                            <th>Изменения</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Здесь будет отображаться история изменений настроек -->
+                                        <tr>
+                                            <td>{{ settings.updated_at.strftime('%d.%m.%Y %H:%M') if settings.updated_at else 'Нет данных' }}</td>
+                                            <td>Admin</td>
+                                            <td>
+                                                {% if settings.description %}
+                                                    {{ settings.description }}
+                                                {% else %}
+                                                    Начальная настройка системы
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка "Аналитика" -->
+        <div class="tab-pane fade" id="analytics" role="tabpanel" aria-labelledby="analytics-tab">
+            <div class="row">
+                <!-- Графики и диаграммы -->
+                <div class="col-md-8">
+                    <div class="card admin-card mb-4">
+                        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-line me-2"></i> Динамика рефералов
+                            </h5>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm btn-outline-light active" data-period="month">Месяц</button>
+                                <button type="button" class="btn btn-sm btn-outline-light" data-period="week">Неделя</button>
+                                <button type="button" class="btn btn-sm btn-outline-light" data-period="year">Год</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="referralsChart" height="300"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="card admin-card">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-pie me-2"></i> Конверсия рефералов
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <canvas id="conversionChart" height="250"></canvas>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="stats-container p-3">
+                                        <div class="mb-3">
+                                            <h5>Конверсия рефералов</h5>
+                                            <p class="mb-2">
+                                                Регистрация → Активация: <span id="conversionRate">0</span>%
+                                            </p>
+                                            <div class="progress mb-3">
+                                                <div id="conversionProgress" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h5>Статистика</h5>
+                                            <ul class="list-group">
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    Всего рефералов
+                                                    <span class="badge bg-primary rounded-pill" id="totalReferralsCount">0</span>
+                                                </li>
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    Активных рефералов
+                                                    <span class="badge bg-success rounded-pill" id="activeReferralsCount">0</span>
+                                                </li>
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    Ожидающих активации
+                                                    <span class="badge bg-warning rounded-pill" id="pendingReferralsCount">0</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Топ рефоводов -->
+                <div class="col-md-4">
+                    <div class="card admin-card h-100">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-trophy me-2"></i> Топ рефоводов по активным рефералам
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="topReferrersChart" height="350"></canvas>
+                            <div class="mt-3">
+                                <table class="table table-sm mobile-transform">
+                                    <thead>
+                                        <tr>
+                                            <th>Пользователь</th>
+                                            <th class="text-end">Активные рефералы</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="topReferrersTable">
+                                        <!-- Данные будут добавлены JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script src="{{ url_for('static', filename='js/referrals_admin.js') }}"></script>
+<script>
+    // Глобальные переменные
+    let referralsChart = null;
+    let conversionChart = null;
+    let topReferrersChart = null;
+    
+    // Текущие состояния фильтров и пагинации
+    const referralsState = {
+        page: 1,
+        perPage: 10,
+        search: '',
+        status: '',
+        dateFrom: '',
+        dateTo: '',
+        referrerId: null
+    };
+    
+    const paymentsState = {
+        page: 1,
+        perPage: 10,
+        search: '',
+        status: '',
+        dateFrom: '',
+        dateTo: '',
+        referrerId: null
+    };
+    
+    // Текущее состояние аналитики
+    let analyticsPeriod = 'month';
+    
+    // Обработчики событий
+    document.addEventListener('DOMContentLoaded', function() {
+        // Инициализация вкладок и загрузка данных
+        initializeTabEvents();
+        
+        // Инициализация обработчиков событий
+        initializeReferralsEvents();
+        initializePaymentsEvents();
+        initializeSettingsEvents();
+        initializeAnalyticsEvents();
+        
+        // Запускаем загрузку данных на активной вкладке
+        const activeTab = document.querySelector('.nav-link.active');
+        if (activeTab) {
+            const tabId = activeTab.getAttribute('id');
+            handleTabChange(tabId);
+        }
+    });
+    
+    // Инициализация событий вкладок
+    function initializeTabEvents() {
+        const tabs = document.querySelectorAll('button[data-bs-toggle="tab"]');
+        tabs.forEach(tab => {
+            tab.addEventListener('shown.bs.tab', function(event) {
+                const tabId = event.target.getAttribute('id');
+                handleTabChange(tabId);
+            });
+        });
+    }
+    
+    // Обработка смены вкладки
+    function handleTabChange(tabId) {
+        switch(tabId) {
+            case 'overview-tab':
+                // Данные обзора загружены через Flask
+                break;
+            case 'referrals-tab':
+                loadReferrals();
+                break;
+            case 'payments-tab':
+                loadPayments();
+                break;
+            case 'settings-tab':
+                // Настройки загружены через Flask
+                break;
+            case 'analytics-tab':
+                loadAnalytics();
+                break;
+        }
+    }
+    
+    // === РЕФЕРАЛЫ ===
+    function initializeReferralsEvents() {
+        // Обработчики фильтров
+        document.getElementById('applyReferralFilters').addEventListener('click', function() {
+            referralsState.search = document.getElementById('referralSearch').value;
+            referralsState.status = document.getElementById('referralStatus').value;
+            referralsState.dateFrom = document.getElementById('referralDateFrom').value;
+            referralsState.dateTo = document.getElementById('referralDateTo').value;
+            referralsState.page = 1;
+            loadReferrals();
+        });
+        
+        document.getElementById('resetReferralFilters').addEventListener('click', function() {
+            document.getElementById('referralSearch').value = '';
+            document.getElementById('referralStatus').value = '';
+            document.getElementById('referralDateFrom').value = '';
+            document.getElementById('referralDateTo').value = '';
+            
+            referralsState.search = '';
+            referralsState.status = '';
+            referralsState.dateFrom = '';
+            referralsState.dateTo = '';
+            referralsState.page = 1;
+            loadReferrals();
+        });
+        
+        // Обработчик изменения количества записей на странице
+        document.getElementById('referralsPerPage').addEventListener('change', function() {
+            referralsState.perPage = parseInt(this.value);
+            referralsState.page = 1;
+            loadReferrals();
+        });
+        
+        // Обработчик экспорта CSV
+        document.getElementById('exportReferralsBtn').addEventListener('click', function() {
+            exportReferrals('referrals');
+        });
+        
+        // Инициализация модального окна удаления реферальной связи
+        document.getElementById('confirmRemoveReferral').addEventListener('click', function() {
+            const referralId = this.getAttribute('data-referral-id');
+            removeReferral(referralId);
+        });
+    }
+    
+    // Загрузка списка рефералов
+    function loadReferrals() {
+        const tableBody = document.querySelector('#referralsTable tbody');
+        tableBody.innerHTML = '<tr><td colspan="9" class="text-center py-3"><div class="spinner-border text-primary" role="status"></div> Загрузка данных...</td></tr>';
+        
+        // Формируем URL с параметрами
+        let url = `/api/admin/referrals/data?page=${referralsState.page}&per_page=${referralsState.perPage}`;
+        if (referralsState.search) url += `&search=${encodeURIComponent(referralsState.search)}`;
+        if (referralsState.status) url += `&status=${encodeURIComponent(referralsState.status)}`;
+        if (referralsState.dateFrom) url += `&date_from=${encodeURIComponent(referralsState.dateFrom)}`;
+        if (referralsState.dateTo) url += `&date_to=${encodeURIComponent(referralsState.dateTo)}`;
+        if (referralsState.referrerId) url += `&referrer_id=${referralsState.referrerId}`;
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="9" class="text-center py-3">Нет данных по заданным критериям</td></tr>';
+                    document.getElementById('referralsPagination').innerHTML = '';
+                    return;
+                }
+                
+                // Заполняем таблицу
+                tableBody.innerHTML = '';
+                data.data.forEach(referral => {
+                    const statusBadge = referral.status === 'active'
+                        ? '<span class="badge bg-success">Активный</span>'
+                        : '<span class="badge bg-warning">Ожидает</span>';
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${referral.id}</td>
+                        <td>
+                            <strong>${referral.referral_username}</strong><br>
+                            <small class="text-muted">${referral.referral_email}</small>
+                        </td>
+                        <td>${referral.registration_date}</td>
+                        <td>
+                            <strong>${referral.referrer_username}</strong><br>
+                            <small class="text-muted">${referral.referrer_email}</small>
+                        </td>
+                        <td>${referral.total_deposits.toFixed(2)} USDT</td>
+                        <td>${referral.total_profit.toFixed(2)} USDT</td>
+                        <td>${referral.referrer_earnings.toFixed(2)} USDT</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <a href="/admin/users/${referral.id}" class="btn btn-sm btn-info mb-1">
+                                <i class="fas fa-user me-1"></i> Профиль
+                            </a>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="showRemoveReferralModal(${referral.id}, '${referral.referral_username}')">
+                                <i class="fas fa-unlink me-1"></i> Удалить связь
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+                // Обновляем пагинацию
+                updatePagination(data.total, referralsState.page, referralsState.perPage, 'referrals');
+            })
+            .catch(error => {
+                console.error('Ошибка загрузки рефералов:', error);
+                tableBody.innerHTML = '<tr><td colspan="9" class="text-center py-3 text-danger">Ошибка загрузки данных</td></tr>';
+            });
+    }
+    
+    // Показать модальное окно удаления реферальной связи
+    function showRemoveReferralModal(referralId, referralUsername) {
+        document.getElementById('removeReferralUsername').textContent = referralUsername;
+        document.getElementById('confirmRemoveReferral').setAttribute('data-referral-id', referralId);
+        
+        const modal = new bootstrap.Modal(document.getElementById('removeReferralModal'));
+        modal.show();
+    }
+    
+    // Удаление реферальной связи
+    function removeReferral(referralId) {
+        fetch('/api/admin/referrals/remove-referral', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ referral_id: referralId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Ошибка: ' + data.error);
+                return;
+            }
+            
+            // Закрываем модальное окно
+            bootstrap.Modal.getInstance(document.getElementById('removeReferralModal')).hide();
+            
+            // Обновляем данные
+            loadReferrals();
+            
+            // Показываем уведомление
+            alert('Реферальная связь успешно удалена');
+        })
+        .catch(error => {
+            console.error('Ошибка удаления связи:', error);
+            alert('Произошла ошибка при удалении связи');
+        });
+    }
+    
+    // === ВЫПЛАТЫ ===
+    function initializePaymentsEvents() {
+        // Обработчики фильтров
+        document.getElementById('applyPaymentFilters').addEventListener('click', function() {
+            paymentsState.search = document.getElementById('paymentSearch').value;
+            paymentsState.status = document.getElementById('paymentStatus').value;
+            paymentsState.dateFrom = document.getElementById('paymentDateFrom').value;
+            paymentsState.dateTo = document.getElementById('paymentDateTo').value;
+            paymentsState.page = 1;
+            loadPayments();
+        });
+        
+        document.getElementById('resetPaymentFilters').addEventListener('click', function() {
+            document.getElementById('paymentSearch').value = '';
+            document.getElementById('paymentStatus').value = '';
+            document.getElementById('paymentDateFrom').value = '';
+            document.getElementById('paymentDateTo').value = '';
+            
+            paymentsState.search = '';
+            paymentsState.status = '';
+            paymentsState.dateFrom = '';
+            paymentsState.dateTo = '';
+            paymentsState.page = 1;
+            loadPayments();
+        });
+        
+        // Обработчик изменения количества записей на странице
+        document.getElementById('paymentsPerPage').addEventListener('change', function() {
+            paymentsState.perPage = parseInt(this.value);
+            paymentsState.page = 1;
+            loadPayments();
+        });
+        
+        // Обработчик экспорта CSV
+        document.getElementById('exportPaymentsBtn').addEventListener('click', function() {
+            exportReferrals('payments');
+        });
+        
+        // Обработчик кнопки создания выплаты
+        document.getElementById('createPaymentBtn').addEventListener('click', function() {
+            prepareCreatePaymentModal();
+        });
+        
+        // Инициализация формы выплаты
+        document.getElementById('referralProfit').addEventListener('input', updateRecommendedAmount);
+        document.getElementById('savePaymentBtn').addEventListener('click', createPayment);
+        
+        // Инициализация обновления статуса выплаты
+        document.getElementById('updatePaymentBtn').addEventListener('click', updatePaymentStatus);
+    }
+    
+    // Загрузка списка выплат
+    function loadPayments() {
+        const tableBody = document.querySelector('#paymentsTable tbody');
+        tableBody.innerHTML = '<tr><td colspan="10" class="text-center py-3"><div class="spinner-border text-primary" role="status"></div> Загрузка данных...</td></tr>';
+        
+        // Формируем URL с параметрами
+        let url = `/api/admin/referrals/payments?page=${paymentsState.page}&per_page=${paymentsState.perPage}`;
+        if (paymentsState.search) url += `&search=${encodeURIComponent(paymentsState.search)}`;
+        if (paymentsState.status) url += `&status=${encodeURIComponent(paymentsState.status)}`;
+        if (paymentsState.dateFrom) url += `&date_from=${encodeURIComponent(paymentsState.dateFrom)}`;
+        if (paymentsState.dateTo) url += `&date_to=${encodeURIComponent(paymentsState.dateTo)}`;
+        if (paymentsState.referrerId) url += `&referrer_id=${encodeURIComponent(paymentsState.referrerId)}`;
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="10" class="text-center py-3">Нет данных по заданным критериям</td></tr>';
+                    document.getElementById('paymentsPagination').innerHTML = '';
+                    return;
+                }
+                
+                // Заполняем таблицу
+                tableBody.innerHTML = '';
+                data.data.forEach(payment => {
+                    let statusBadge = '';
+                    if (payment.status === 'pending') {
+                        statusBadge = '<span class="badge bg-warning">Ожидает</span>';
+                    } else if (payment.status === 'paid') {
+                        statusBadge = '<span class="badge bg-success">Оплачено</span>';
+                    } else if (payment.status === 'canceled') {
+                        statusBadge = '<span class="badge bg-danger">Отменено</span>';
+                    }
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${payment.id}</td>
+                        <td>
+                            <strong>${payment.referrer_username}</strong><br>
+                            <small class="text-muted">${payment.referrer_email}</small>
+                        </td>
+                        <td>
+                            <strong>${payment.referral_username}</strong><br>
+                            <small class="text-muted">${payment.referral_email}</small>
+                        </td>
+                        <td>${payment.amount.toFixed(2)} USDT</td>
+                        <td>${payment.referral_profit.toFixed(2)} USDT</td>
+                        <td>${payment.percentage.toFixed(1)}%</td>
+                        <td>${payment.created_at}</td>
+                        <td>${payment.paid_at || '-'}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="showUpdatePaymentModal(${payment.id}, '${payment.status}', '${payment.notes || ''}')">
+                                <i class="fas fa-edit me-1"></i> Изменить
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+                // Обновляем пагинацию
+                updatePagination(data.total, paymentsState.page, paymentsState.perPage, 'payments');
+            })
+            .catch(error => {
+                console.error('Ошибка загрузки выплат:', error);
+                tableBody.innerHTML = '<tr><td colspan="10" class="text-center py-3 text-danger">Ошибка загрузки данных</td></tr>';
+            });
+    }
+    
+    // Подготовка модального окна создания выплаты
+    function prepareCreatePaymentModal() {
+        // Сбросить форму
+        document.getElementById('createPaymentForm').reset();
+        document.getElementById('referralSelect').disabled = true;
+        document.getElementById('referralSelect').innerHTML = '<option value="">Сначала выберите рефовода</option>';
+        
+        // Загрузить список рефоводов
+        fetch('/api/admin/users?has_referrals=true')
+            .then(response => response.json())
+            .then(data => {
+                const referrerSelect = document.getElementById('referrerSelect');
+                referrerSelect.innerHTML = '<option value="">Выберите рефовода</option>';
+                
+                data.forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.id;
+                    option.textContent = `${user.username} (${user.email})`;
+                    referrerSelect.appendChild(option);
+                });
+                
+                // Инициализировать обработчик выбора рефовода
+                referrerSelect.addEventListener('change', function() {
+                    const referrerId = this.value;
+                    if (!referrerId) {
+                        document.getElementById('referralSelect').disabled = true;
+                        document.getElementById('referralSelect').innerHTML = '<option value="">Сначала выберите рефовода</option>';
+                        return;
+                    }
+                    
+                    // Загрузить список рефералов для выбранного рефовода
+                    fetch(`/api/admin/referrals/data?referrer_id=${referrerId}&status=active`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const referralSelect = document.getElementById('referralSelect');
+                            referralSelect.innerHTML = '<option value="">Выберите реферала</option>';
+                            
+                            data.data.forEach(referral => {
+                                const option = document.createElement('option');
+                                option.value = referral.id;
+                                option.textContent = `${referral.referral_username} (${referral.referral_email})`;
+                                referralSelect.appendChild(option);
+                            });
+                            
+                            referralSelect.disabled = false;
+                        })
+                        .catch(error => {
+                            console.error('Ошибка загрузки рефералов:', error);
+                        });
+                });
+            })
+            .catch(error => {
+                console.error('Ошибка загрузки рефоводов:', error);
+            });
+        
+        // Показать модальное окно
+        const modal = new bootstrap.Modal(document.getElementById('createPaymentModal'));
+        modal.show();
+    }
+    
+    // Обновление рекомендуемой суммы выплаты
+    function updateRecommendedAmount() {
+        const referralProfit = parseFloat(document.getElementById('referralProfit').value) || 0;
+        const percentage = {{ settings.referral_percentage }};
+        const recommendedAmount = (referralProfit * percentage / 100).toFixed(2);
+        document.getElementById('recommendedAmount').textContent = recommendedAmount;
+        document.getElementById('paymentAmount').value = recommendedAmount;
+    }
+    
+    // Создание выплаты
+    function createPayment() {
+        const referrerId = document.getElementById('referrerSelect').value;
+        const referralId = document.getElementById('referralSelect').value;
+        const amount = parseFloat(document.getElementById('paymentAmount').value);
+        const referralProfit = parseFloat(document.getElementById('referralProfit').value);
+        const status = document.getElementById('paymentStatus').value;
+        const notes = document.getElementById('paymentNotes').value;
+        
+        if (!referrerId || !referralId || isNaN(amount) || isNaN(referralProfit) || amount <= 0 || referralProfit <= 0) {
+            alert('Пожалуйста, заполните все обязательные поля');
+            return;
+        }
+        
+        fetch('/api/admin/referrals/create-payment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                referrer_id: referrerId,
+                referral_id: referralId,
+                amount: amount,
+                referral_profit: referralProfit,
+                status: status,
+                notes: notes
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Ошибка: ' + data.error);
+                return;
+            }
+            
+            // Закрываем модальное окно
+            bootstrap.Modal.getInstance(document.getElementById('createPaymentModal')).hide();
+            
+            // Обновляем данные
+            loadPayments();
+            
+            // Показываем уведомление
+            alert('Выплата успешно создана');
+        })
+        .catch(error => {
+            console.error('Ошибка создания выплаты:', error);
+            alert('Произошла ошибка при создании выплаты');
+        });
+    }
+    
+    // Показать модальное окно обновления статуса выплаты
+    function showUpdatePaymentModal(paymentId, status, notes) {
+        document.getElementById('updatePaymentStatus').value = status;
+        document.getElementById('updatePaymentNotes').value = notes;
+        document.getElementById('updatePaymentBtn').setAttribute('data-payment-id', paymentId);
+        
+        const modal = new bootstrap.Modal(document.getElementById('updatePaymentStatusModal'));
+        modal.show();
+    }
+    
+    // Обновление статуса выплаты
+    function updatePaymentStatus() {
+        const paymentId = document.getElementById('updatePaymentBtn').getAttribute('data-payment-id');
+        const status = document.getElementById('updatePaymentStatus').value;
+        const notes = document.getElementById('updatePaymentNotes').value;
+        
+        fetch(`/api/admin/referrals/payments/${paymentId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                status: status,
+                notes: notes
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Ошибка: ' + data.error);
+                return;
+            }
+            
+            // Закрываем модальное окно
+            bootstrap.Modal.getInstance(document.getElementById('updatePaymentStatusModal')).hide();
+            
+            // Обновляем данные
+            loadPayments();
+            
+            // Показываем уведомление
+            alert('Статус выплаты успешно обновлен');
+        })
+        .catch(error => {
+            console.error('Ошибка обновления статуса:', error);
+            alert('Произошла ошибка при обновлении статуса');
+        });
+    }
+    
+    // === НАСТРОЙКИ ===
+    function initializeSettingsEvents() {
+        // Обработчик сохранения настроек
+        document.getElementById('saveSettingsBtn').addEventListener('click', function() {
+            saveSettings();
+        });
+    }
+    
+    // Сохранение настроек реферальной системы
+    function saveSettings() {
+        const minDepositAmount = parseFloat(document.getElementById('minDepositAmount').value);
+        const referralPercentage = parseFloat(document.getElementById('referralPercentage').value);
+        const active = document.getElementById('referralSystemActive').checked;
+        const description = document.getElementById('settingsDescription').value;
+        
+        if (isNaN(minDepositAmount) || isNaN(referralPercentage) || minDepositAmount < 0 || referralPercentage < 0 || referralPercentage > 100) {
+            alert('Пожалуйста, введите корректные значения для настроек');
+            return;
+        }
+        
+        fetch('/api/admin/referrals/settings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                min_deposit_amount: minDepositAmount,
+                referral_percentage: referralPercentage,
+                active: active,
+                description: description
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Ошибка: ' + data.error);
+                return;
+            }
+            
+            // Показываем уведомление
+            alert('Настройки успешно сохранены');
+            
+            // Обновляем страницу для отображения новых настроек
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Ошибка сохранения настроек:', error);
+            alert('Произошла ошибка при сохранении настроек');
+        });
+    }
+    
+    // === АНАЛИТИКА ===
+    function initializeAnalyticsEvents() {
+        // Обработчики переключения периода
+        const periodButtons = document.querySelectorAll('[data-period]');
+        periodButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Сбрасываем активное состояние для всех кнопок
+                periodButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Устанавливаем активное состояние для выбранной кнопки
+                this.classList.add('active');
+                
+                // Обновляем период и загружаем данные
+                analyticsPeriod = this.getAttribute('data-period');
+                loadAnalytics();
+            });
+        });
+    }
+    
+    // Загрузка аналитических данных
+    function loadAnalytics() {
+        fetch(`/api/admin/referrals/analytics?period=${analyticsPeriod}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Ошибка загрузки аналитики:', data.error);
+                    return;
+                }
+                
+                // Обновляем графики
+                updateReferralsChart(data.referrals_per_period, data.activations_per_period);
+                updateConversionChart(data.total_referrals, data.active_referrals);
+                updateTopReferrersChart(data.top_referrers);
+                
+                // Обновляем статистику
+                document.getElementById('conversionRate').textContent = data.conversion_rate;
+                document.getElementById('conversionProgress').style.width = `${data.conversion_rate}%`;
+                document.getElementById('totalReferralsCount').textContent = data.total_referrals;
+                document.getElementById('activeReferralsCount').textContent = data.active_referrals;
+                document.getElementById('pendingReferralsCount').textContent = data.total_referrals - data.active_referrals;
+            })
+            .catch(error => {
+                console.error('Ошибка загрузки аналитики:', error);
+            });
+    }
+    
+    // Обновление графика динамики рефералов
+    function updateReferralsChart(referralsData, activationsData) {
+        const ctx = document.getElementById('referralsChart').getContext('2d');
+        
+        // Подготовка данных
+        const labels = referralsData.map(item => item.period);
+        const referralsCounts = referralsData.map(item => item.count);
+        
+        // Находим соответствующие данные активаций для тех же периодов
+        const activationsCounts = labels.map(period => {
+            const match = activationsData.find(item => item.period === period);
+            return match ? match.count : 0;
+        });
+        
+        // Уничтожаем предыдущий график, если он существует
+        if (referralsChart) {
+            referralsChart.destroy();
+        }
+        
+        // Создаем новый график
+        referralsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Новые рефералы',
+                        data: referralsCounts,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.1,
+                        fill: true
+                    },
+                    {
+                        label: 'Активации',
+                        data: activationsCounts,
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                        tension: 0.1,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Динамика регистрации и активации рефералов'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+    
+    // Обновление графика конверсии рефералов
+    function updateConversionChart(totalReferrals, activeReferrals) {
+        const ctx = document.getElementById('conversionChart').getContext('2d');
+        
+        // Уничтожаем предыдущий график, если он существует
+        if (conversionChart) {
+            conversionChart.destroy();
+        }
+        
+        // Создаем новый график
+        conversionChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Активные', 'Ожидающие'],
+                datasets: [{
+                    data: [activeReferrals, totalReferrals - activeReferrals],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(255, 205, 86, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 205, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Соотношение активных/неактивных рефералов'
+                    }
+                }
+            }
+        });
+    }
+    
+    // Обновление графика топ рефоводов
+    function updateTopReferrersChart(topReferrers) {
+        const ctx = document.getElementById('topReferrersChart').getContext('2d');
+        
+        // Подготовка данных
+        const labels = topReferrers.map(item => item.username);
+        const counts = topReferrers.map(item => item.active_referrals);
+        
+        // Уничтожаем предыдущий график, если он существует
+        if (topReferrersChart) {
+            topReferrersChart.destroy();
+        }
+        
+        // Создаем новый график
+        topReferrersChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Активные рефералы',
+                    data: counts,
+                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Топ рефоводов по активным рефералам'
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // Обновляем таблицу топ рефоводов
+        const tableBody = document.getElementById('topReferrersTable');
+        tableBody.innerHTML = '';
+        
+        topReferrers.forEach(referrer => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${referrer.username}</td>
+                <td class="text-end">${referrer.active_referrals}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+    
+    // === ОБЩИЕ ФУНКЦИИ ===
+    // Обновление пагинации
+    function updatePagination(total, currentPage, perPage, type) {
+        const totalPages = Math.ceil(total / perPage);
+        const pagination = document.getElementById(`${type}Pagination`);
+        pagination.innerHTML = '';
+        
+        // Кнопка "Предыдущая"
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        const prevLink = document.createElement('a');
+        prevLink.className = 'page-link';
+        prevLink.href = '#';
+        prevLink.setAttribute('aria-label', 'Предыдущая');
+        prevLink.innerHTML = '<span aria-hidden="true">&laquo;</span>';
+        prevLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (currentPage > 1) {
+                if (type === 'referrals') {
+                    referralsState.page = currentPage - 1;
+                    loadReferrals();
+                } else if (type === 'payments') {
+                    paymentsState.page = currentPage - 1;
+                    loadPayments();
+                }
+            }
+        });
+        prevLi.appendChild(prevLink);
+        pagination.appendChild(prevLi);
+        
+        // Номера страниц
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, startPage + 4);
+        
+        for (let i = startPage; i <= endPage; i++) {
+            const pageLi = document.createElement('li');
+            pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
+            const pageLink = document.createElement('a');
+            pageLink.className = 'page-link';
+            pageLink.href = '#';
+            pageLink.textContent = i;
+            pageLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (type === 'referrals') {
+                    referralsState.page = i;
+                    loadReferrals();
+                } else if (type === 'payments') {
+                    paymentsState.page = i;
+                    loadPayments();
+                }
+            });
+            pageLi.appendChild(pageLink);
+            pagination.appendChild(pageLi);
+        }
+        
+        // Кнопка "Следующая"
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+        const nextLink = document.createElement('a');
+        nextLink.className = 'page-link';
+        nextLink.href = '#';
+        nextLink.setAttribute('aria-label', 'Следующая');
+        nextLink.innerHTML = '<span aria-hidden="true">&raquo;</span>';
+        nextLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (currentPage < totalPages) {
+                if (type === 'referrals') {
+                    referralsState.page = currentPage + 1;
+                    loadReferrals();
+                } else if (type === 'payments') {
+                    paymentsState.page = currentPage + 1;
+                    loadPayments();
+                }
+            }
+        });
+        nextLi.appendChild(nextLink);
+        pagination.appendChild(nextLi);
+    }
+    
+    // Экспорт данных в CSV
+    function exportReferrals(type) {
+        window.location.href = `/api/admin/referrals/export?type=${type}`;
+    }
+</script>
+{% endblock %}

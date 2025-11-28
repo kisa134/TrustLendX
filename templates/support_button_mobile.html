@@ -1,0 +1,84 @@
+    <!-- Плавающая кнопка поддержки для мобильных устройств -->
+    <div class="support-chat-button mobile-optimized">
+        <a href="https://t.me/TrustLendX_Admin" target="_blank" class="btn btn-primary rounded-circle shadow" title="Поддержка в Telegram">
+            <i class="fab fa-telegram"></i>
+        </a>
+        <span class="support-label">Поддержка</span>
+    </div>
+
+    <style>
+        .support-chat-button.mobile-optimized {
+            position: fixed;
+            bottom: 70px;
+            right: 15px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: flex-end;
+            justify-content: flex-end;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-optimized .btn {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+        }
+        
+        .mobile-optimized .btn i {
+            font-size: 1.3rem;
+        }
+        
+        .mobile-optimized .support-label {
+            background: #343a40;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-weight: 500;
+            font-size: 0.85rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-optimized:hover .support-label {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Адаптация для десктопа */
+        @media (min-width: 768px) {
+            .support-chat-button.mobile-optimized {
+                bottom: 30px;
+                right: 30px;
+                flex-direction: row;
+                align-items: center;
+            }
+            
+            .mobile-optimized .btn {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .mobile-optimized .btn i {
+                font-size: 1.5rem;
+            }
+            
+            .mobile-optimized .support-label {
+                margin-right: 10px;
+                margin-bottom: 0;
+                transform: translateX(10px);
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+            
+            .mobile-optimized:hover .support-label {
+                transform: translateX(0);
+            }
+        }
+    </style>

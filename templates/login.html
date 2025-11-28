@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold">Вход в аккаунт</h2>
+                        <p class="text-muted">Получите доступ к своему личному кабинету</p>
+                    </div>
+                    
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <form method="POST" action="{{ url_for('login') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        
+                        <div class="mb-3">
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="form-control" id="email" name="email" required autocomplete="email" placeholder="Введите ваш email">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-group">
+                                <label for="password" class="form-label">Пароль</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control" id="password" name="password" required autocomplete="current-password" placeholder="Введите ваш пароль">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Поле для 2FA кода было удалено отсюда, так как теперь оно запрашивается на отдельном экране только при необходимости -->
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me">
+                            <label class="form-check-label" for="remember_me">Запомнить меня</label>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mb-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Войти</button>
+                        </div>
+                        
+                        <div class="text-center">
+                            <p class="mb-0">Нет аккаунта? <a href="{{ url_for('register') }}" class="text-gradient-primary">Зарегистрироваться</a></p>
+                            <p class="mt-2 mb-0">
+                                <small>
+                                    <a href="{{ url_for('reset_2fa') }}" class="text-muted">
+                                        <i class="fas fa-unlock-alt me-1"></i> Проблемы с двухфакторной аутентификацией?
+                                    </a>
+                                </small>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card mt-4 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-shield-alt text-gradient-primary me-3 fa-2x"></i>
+                        <div>
+                            <h5 class="card-title mb-1">Безопасный вход</h5>
+                            <p class="card-text small text-muted mb-0">Ваши данные защищены с использованием стандартного шифрования.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно с информацией о 2FA -->
+<div class="modal fade" id="twoFactorInfoModal" tabindex="-1" aria-labelledby="twoFactorInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="twoFactorInfoModalLabel">Двухфакторная аутентификация</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <i class="fas fa-shield-alt text-primary me-2"></i>
+                    <strong>Двухфакторная аутентификация (2FA)</strong> — это дополнительный уровень безопасности для вашего аккаунта.
+                </p>
+                <p>Когда 2FA включена, вам потребуется ввести дополнительный код из приложения-аутентификатора при входе в систему.</p>
+                
+                <hr>
+                
+                <h6>Как это работает:</h6>
+                <ol>
+                    <li>Установите приложение-аутентификатор на ваше устройство (Google Authenticator, Microsoft Authenticator и т.д.)</li>
+                    <li>Настройте 2FA в личном кабинете</li>
+                    <li>При входе вводите одноразовый код из приложения</li>
+                </ol>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> 
+                    Если у вас ещё не настроена 2FA, оставьте поле с кодом пустым.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

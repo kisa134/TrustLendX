@@ -1,0 +1,432 @@
+{% extends "base.html" %}
+
+{% block title %}Полезные сервисы{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5">Полезные сервисы для крипто-инвесторов и трейдеров</h1>
+    
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <p class="lead text-center mb-5">
+                Мы собрали лучшие инструменты и сервисы, которые помогут вам в торговле и инвестировании в криптовалюты. 
+                Все сервисы проверены и рекомендованы нашей командой.
+            </p>
+            
+            <!-- Мониторинг криптовалют -->
+            <div class="accordion mb-4" id="monitoringCryptoAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingMonitoring">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMonitoring" aria-expanded="true" aria-controls="collapseMonitoring">
+                            <i class="fas fa-chart-bar me-2"></i> Мониторинг криптовалют
+                        </button>
+                    </h2>
+                    <div id="collapseMonitoring" class="accordion-collapse collapse show" aria-labelledby="headingMonitoring" data-bs-parent="#monitoringCryptoAccordion">
+                        <div class="accordion-body p-0">
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#coinmarketcap">
+                                        <span>CoinMarketCap</span>
+                                        <span class="badge bg-primary">Топ</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="coinmarketcap">
+                                        <div class="card card-body">
+                                            <p>Ведущий ресурс для отслеживания цен, капитализации и объемов торгов криптовалют в реальном времени. Предоставляет подробную информацию, графики и статистику по тысячам токенов.</p>
+                                            <a href="https://coinmarketcap.com/ru/" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#coingecko">
+                                        <span>CoinGecko</span>
+                                        <span class="badge bg-secondary">Популярное</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="coingecko">
+                                        <div class="card card-body">
+                                            <p>Альтернативный ресурс для мониторинга криптовалют с дополнительными метриками, такими как показатели сообщества, разработки и множество аналитических данных. Предлагает полезный API для разработчиков.</p>
+                                            <a href="https://www.coingecko.com/ru" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#coin360">
+                                        <span>Coin360</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="coin360">
+                                        <div class="card card-body">
+                                            <p>Визуальная карта рынка криптовалют, где размер блоков отражает капитализацию, а цвет - изменение цены. Интуитивный способ увидеть общую картину рынка одним взглядом.</p>
+                                            <a href="https://coin360.com/" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#cryptorank">
+                                        <span>CryptoRank</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="cryptorank">
+                                        <div class="card card-body">
+                                            <p>Продвинутый мониторинг криптоактивов с подробным анализом ICO, фондов и инвесторов. Отслеживает тренды рынка и предоставляет аналитические данные по различным криптовалютам.</p>
+                                            <a href="https://cryptorank.io/ru" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Анализ графиков и рынков -->
+            <div class="accordion mb-4" id="chartsAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingCharts">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCharts" aria-expanded="false" aria-controls="collapseCharts">
+                            <i class="fas fa-chart-line me-2"></i> Анализ графиков и рынков
+                        </button>
+                    </h2>
+                    <div id="collapseCharts" class="accordion-collapse collapse" aria-labelledby="headingCharts" data-bs-parent="#chartsAccordion">
+                        <div class="accordion-body p-0">
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#tradingview">
+                                        <span>TradingView</span>
+                                        <span class="badge bg-primary">Топ</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="tradingview">
+                                        <div class="card card-body">
+                                            <p>Ведущая платформа для технического анализа с расширенными инструментами для построения графиков. Предлагает социальную сеть для трейдеров, возможность создания и публикации торговых стратегий.</p>
+                                            <a href="https://ru.tradingview.com/" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#tigertrade">
+                                        <span>Tiger.trade</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="tigertrade">
+                                        <div class="card card-body">
+                                            <p>Профессиональный инструмент для анализа стаканов заявок и кластеров. Позволяет увидеть структуру рынка и поведение крупных участников торгов.</p>
+                                            <a href="https://www.tiger.com/" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#stakan">
+                                        <span>Stakan.io</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="stakan">
+                                        <div class="card card-body">
+                                            <p>Скринер для скальпинга с возможностью просмотра стакана заявок в реальном времени. Помогает находить потенциальные точки входа и выхода для краткосрочных трейдов.</p>
+                                            <a href="https://stakan.io/ru/screener" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#coinglass">
+                                        <span>Coinglass</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="coinglass">
+                                        <div class="card card-body">
+                                            <p>Аналитический сервис для отслеживания ликвидаций на фьючерсных рынках. Предоставляет данные о длинных и коротких позициях, финансировании и других ключевых метриках деривативного рынка.</p>
+                                            <a href="https://www.coinglass.com/LiquidationData" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Биржи и обменники -->
+            <div class="accordion mb-4" id="exchangesAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingExchanges">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExchanges" aria-expanded="false" aria-controls="collapseExchanges">
+                            <i class="fas fa-exchange-alt me-2"></i> Биржи и обменники
+                        </button>
+                    </h2>
+                    <div id="collapseExchanges" class="accordion-collapse collapse" aria-labelledby="headingExchanges" data-bs-parent="#exchangesAccordion">
+                        <div class="accordion-body p-0">
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#binance">
+                                        <span>Binance</span>
+                                        <span class="badge bg-primary">Топ</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="binance">
+                                        <div class="card card-body">
+                                            <p>Крупнейшая в мире криптобиржа с максимальными объемами торгов. Предлагает спотовую торговлю, фьючерсы, опционы, стейкинг, P2P-платформу и множество других сервисов для работы с криптовалютами.</p>
+                                            <a href="https://accounts.binance.com" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#bybit">
+                                        <span>Bybit</span>
+                                        <span class="badge bg-secondary">Популярное</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="bybit">
+                                        <div class="card card-body">
+                                            <p>Популярная биржа для спотовой и деривативной торговли. Известна своей надежной системой сопоставления ордеров и интуитивно понятным интерфейсом, подходящим как для начинающих, так и для опытных трейдеров.</p>
+                                            <a href="https://www.bybit.com" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#kucoin">
+                                        <span>KuCoin</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="kucoin">
+                                        <div class="card card-body">
+                                            <p>Биржа с большим выбором альткоинов, включая малоизвестные проекты. Подходит для трейдеров, ищущих новые возможности и монеты с высоким потенциалом роста на ранних стадиях.</p>
+                                            <a href="https://www.kucoin.com" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#bingx">
+                                        <span>BingX</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="bingx">
+                                        <div class="card card-body">
+                                            <p>Инновационная платформа для P2P-торговли и копитрейдинга. Позволяет как торговать самостоятельно, так и копировать сделки успешных трейдеров, делясь с ними частью прибыли.</p>
+                                            <a href="https://bingx.com" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Роботизированная торговля -->
+            <div class="accordion mb-4" id="robotsAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingRobots">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRobots" aria-expanded="false" aria-controls="collapseRobots">
+                            <i class="fas fa-robot me-2"></i> Роботизированная торговля
+                        </button>
+                    </h2>
+                    <div id="collapseRobots" class="accordion-collapse collapse" aria-labelledby="headingRobots" data-bs-parent="#robotsAccordion">
+                        <div class="accordion-body p-0">
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#3commas">
+                                        <span>3Commas</span>
+                                        <span class="badge bg-primary">Топ</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="3commas">
+                                        <div class="card card-body">
+                                            <p>Популярная платформа для автоматизированной торговли с обширным набором ботов: DCA, Grid, HODL, Composite и других. Интегрируется с большинством крупных бирж и предлагает широкий выбор стратегий.</p>
+                                            <a href="https://3commas.io/ru" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#bitsgap">
+                                        <span>Bitsgap</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="bitsgap">
+                                        <div class="card card-body">
+                                            <p>Платформа для автоматизированных торговых стратегий с особым фокусом на Grid-ботов и арбитраж между биржами. Имеет удобный интерфейс и инструменты для контроля рисков.</p>
+                                            <a href="https://app.bitsgap.com" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#gunbot">
+                                        <span>Gunbot</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="gunbot">
+                                        <div class="card card-body">
+                                            <p>Мощный торговый бот для алгоритмической торговли с разовой оплатой (без подписки). Поддерживает множество индикаторов и стратегий, может работать локально на вашем компьютере.</p>
+                                            <a href="https://www.gunbot.com/" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Аппаратные кошельки -->
+            <div class="accordion mb-4" id="walletsAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingWallets">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWallets" aria-expanded="false" aria-controls="collapseWallets">
+                            <i class="fas fa-wallet me-2"></i> Аппаратные кошельки
+                        </button>
+                    </h2>
+                    <div id="collapseWallets" class="accordion-collapse collapse" aria-labelledby="headingWallets" data-bs-parent="#walletsAccordion">
+                        <div class="accordion-body p-0">
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#ledger">
+                                        <span>Ledger</span>
+                                        <span class="badge bg-primary">Топ</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="ledger">
+                                        <div class="card card-body">
+                                            <p>Ведущий производитель аппаратных кошельков для холодного хранения криптовалют. Устройства Ledger (Nano S, Nano X) обеспечивают высокий уровень безопасности, храня приватные ключи в изолированном чипе.</p>
+                                            <a href="https://www.ledger.com/ru" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#trezor">
+                                        <span>Trezor</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="trezor">
+                                        <div class="card card-body">
+                                            <p>Первый в мире аппаратный кошелек для криптовалют. Модели Trezor One и Trezor Model T обеспечивают надежную защиту активов и имеют открытый исходный код для проверки безопасности.</p>
+                                            <a href="https://trezor.io/" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#safepal">
+                                        <span>SafePal</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="safepal">
+                                        <div class="card card-body">
+                                            <p>Аппаратный кошелек с поддержкой большого количества криптовалют и функцией холодного хранения. Отличается доступной ценой и простотой использования, что делает его хорошим выбором для начинающих.</p>
+                                            <a href="https://www.safepal.com/ru/" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Аналитика и индексы -->
+            <div class="accordion mb-4" id="analyticsAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingAnalytics">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAnalytics" aria-expanded="false" aria-controls="collapseAnalytics">
+                            <i class="fas fa-chart-pie me-2"></i> Аналитика и индексы
+                        </button>
+                    </h2>
+                    <div id="collapseAnalytics" class="accordion-collapse collapse" aria-labelledby="headingAnalytics" data-bs-parent="#analyticsAccordion">
+                        <div class="accordion-body p-0">
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#feargreed">
+                                        <span>Crypto Fear & Greed Index</span>
+                                        <span class="badge bg-primary">Топ</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="feargreed">
+                                        <div class="card card-body">
+                                            <p>Индекс, измеряющий два основных настроения рынка: страх и жадность. Помогает определить, является ли рынок перепроданным (страх) или перекупленным (жадность), что может указывать на потенциальные точки разворота.</p>
+                                            <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#glassnode">
+                                        <span>Glassnode</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="glassnode">
+                                        <div class="card card-body">
+                                            <p>Платформа для ончейн-аналитики, предоставляющая данные о сетевой активности, метриках адресов и другие индикаторы для оценки фундаментальных показателей различных блокчейнов и криптовалют.</p>
+                                            <a href="https://studio.glassnode.com/metrics?a=BTC&m=addresses.ActiveCount" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#altseason">
+                                        <span>Altcoin Season Index</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="altseason">
+                                        <div class="card card-body">
+                                            <p>Индикатор, показывающий, находится ли рынок в сезоне альткоинов или в сезоне биткоина. Помогает трейдерам определить оптимальное время для переключения между разными типами активов.</p>
+                                            <a href="https://www.blockchaincenter.net/en/altcoin-season-index/" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="list-group-item">
+                                    <a class="d-flex justify-content-between align-items-center text-decoration-none text-secondary" data-bs-toggle="collapse" href="#santiment">
+                                        <span>Santiment</span>
+                                    </a>
+                                    <div class="collapse mt-2" id="santiment">
+                                        <div class="card card-body">
+                                            <p>Аналитическая платформа, сочетающая данные по социальным сетям и ончейн-метрики. Отслеживает настроения сообщества, активность разработчиков и другие факторы, влияющие на рынок.</p>
+                                            <a href="https://app.santiment.net/" target="_blank" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-external-link-alt me-1"></i> Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+        </div>
+    </div>
+</div>
+{% endblock %}

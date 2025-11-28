@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}Настройка двухфакторной аутентификации{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Настройка двухфакторной аутентификации</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Важно:</strong> Двухфакторная аутентификация добавляет дополнительный уровень защиты к вашей учетной записи.
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5 class="mb-3">Шаг 1: Установите приложение аутентификации</h5>
+                        <p>Вам понадобится приложение для создания одноразовых кодов на вашем устройстве:</p>
+                        <div class="row mt-3">
+                            <div class="col-md-4 mb-2 mb-md-0 text-center">
+                                <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank" class="text-decoration-none">
+                                    <i class="fab fa-android fa-2x mb-2 text-success"></i><br>
+                                    <span>Google Authenticator<br>(Android)</span>
+                                </a>
+                            </div>
+                            <div class="col-md-4 mb-2 mb-md-0 text-center">
+                                <a href="https://apps.apple.com/us/app/google-authenticator/id388497605" target="_blank" class="text-decoration-none">
+                                    <i class="fab fa-apple fa-2x mb-2 text-dark"></i><br>
+                                    <span>Google Authenticator<br>(iOS)</span>
+                                </a>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <a href="https://authy.com/download/" target="_blank" class="text-decoration-none">
+                                    <i class="fas fa-mobile-alt fa-2x mb-2 text-primary"></i><br>
+                                    <span>Authy<br>(iOS/Android)</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5 class="mb-3">Шаг 2: Отсканируйте QR-код или введите ключ вручную</h5>
+                        <div class="row align-items-center">
+                            <div class="col-md-6 text-center mb-3 mb-md-0">
+                                <div class="bg-light p-3 rounded">
+                                    <img src="{{ qr_code }}" alt="QR Code" class="img-fluid">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Секретный ключ:</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" value="{{ secret_key }}" id="secretKey" readonly>
+                                        <button class="btn btn-outline-secondary" type="button" id="copySecret">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                    <div class="form-text">
+                                        Если вы не можете отсканировать QR-код, введите этот ключ вручную.
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Резервный код:</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" value="{{ backup_code }}" id="backupCode" readonly>
+                                        <button class="btn btn-outline-secondary" type="button" id="copyBackup">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                    <div class="form-text text-warning">
+                                        <i class="fas fa-exclamation-triangle me-1"></i> Сохраните этот код! Он пригодится, если вы потеряете доступ к устройству.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h5 class="mb-3">Шаг 3: Введите код подтверждения</h5>
+                        <p>Введите 6-значный код из приложения аутентификации:</p>
+                        
+                        <form method="post" action="{{ url_for('setup_2fa') }}">
+                            {{ form.hidden_tag() }}
+                            
+                            <div class="mb-3">
+                                {{ form.otp_code.label(class="form-label") }}
+                                {{ form.otp_code(class="form-control form-control-lg text-center" + (" is-invalid" if form.otp_code.errors else ""), placeholder="Введите 6-значный код") }}
+                                {% if form.otp_code.errors %}
+                                    {% for error in form.otp_code.errors %}
+                                        <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                {{ form.submit(class="btn btn-primary btn-lg") }}
+                                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times-circle me-1"></i> Отмена
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Копирование секретного ключа
+    document.getElementById('copySecret').addEventListener('click', function() {
+        const secretField = document.getElementById('secretKey');
+        secretField.select();
+        document.execCommand('copy');
+        
+        // Визуальная обратная связь
+        this.innerHTML = '<i class="fas fa-check"></i>';
+        this.classList.add('btn-success');
+        this.classList.remove('btn-outline-secondary');
+        
+        setTimeout(() => {
+            this.innerHTML = '<i class="fas fa-copy"></i>';
+            this.classList.remove('btn-success');
+            this.classList.add('btn-outline-secondary');
+        }, 1500);
+    });
+    
+    // Копирование резервного кода
+    document.getElementById('copyBackup').addEventListener('click', function() {
+        const backupField = document.getElementById('backupCode');
+        backupField.select();
+        document.execCommand('copy');
+        
+        // Визуальная обратная связь
+        this.innerHTML = '<i class="fas fa-check"></i>';
+        this.classList.add('btn-success');
+        this.classList.remove('btn-outline-secondary');
+        
+        setTimeout(() => {
+            this.innerHTML = '<i class="fas fa-copy"></i>';
+            this.classList.remove('btn-success');
+            this.classList.add('btn-outline-secondary');
+        }, 1500);
+    });
+</script>
+{% endblock %}

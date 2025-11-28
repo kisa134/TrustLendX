@@ -1,0 +1,301 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Детальная информация о пользователе</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <a href="{{ url_for('admin_users') }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Вернуться к списку
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Карточка пользователя -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card bg-dark border-0 shadow-sm h-100">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Информация о пользователе</h6>
+                    <div>
+                        <form action="{{ url_for('admin_toggle_admin_status', user_id=user.id) }}" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-sm {% if user.is_admin %}btn-warning{% else %}btn-outline-warning{% endif %}">
+                                {% if user.is_admin %}
+                                <i class="fas fa-user-minus me-1"></i> Снять админ-права
+                                {% else %}
+                                <i class="fas fa-user-shield me-1"></i> Назначить администратором
+                                {% endif %}
+                            </button>
+                        </form>
+                        <!-- Кнопка вызова модального окна подтверждения -->
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
+                            <i class="fas fa-trash-alt me-1"></i> Удалить пользователя
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>ID пользователя:</strong> {{ user.id }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Имя пользователя:</strong> {{ user.username }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Email:</strong> {{ user.email }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Дата регистрации:</strong> {{ user.registered_on.strftime('%d.%m.%Y %H:%M') }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>IP при регистрации:</strong> 
+                        {% set register_ip = user.ip_logs|selectattr('activity_type', 'equalto', 'register')|first %}
+                        {% if register_ip %}
+                        {{ register_ip.ip_address }}
+                        {% else %}
+                        <span class="text-muted">Нет данных</span>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Последний IP:</strong> 
+                        {% if user.ip_logs|length > 0 %}
+                        {% set last_log = user.ip_logs|sort(attribute='timestamp', reverse=True)|first %}
+                        {{ last_log.ip_address }}
+                        <span class="text-muted small">({{ last_log.timestamp.strftime('%d.%m.%Y %H:%M') }})</span>
+                        {% else %}
+                        <span class="text-muted">Нет данных</span>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Статус:</strong>
+                        {% if user.is_admin %}
+                        <span class="badge bg-danger">Администратор</span>
+                        {% else %}
+                        <span class="badge bg-success">Пользователь</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-dark border-0 shadow-sm h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Финансовая информация</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Общий баланс:</strong> <span class="text-success">{{ "%.2f"|format(total_balance) }} USDT</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Ожидаемая прибыль:</strong> <span class="text-info">{{ "%.2f"|format(expected_profit) }} USDT</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Количество транзакций:</strong> {{ transactions|length }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Активных депозитов:</strong> 
+                        {{ transactions|selectattr('status', 'equalto', 'completed')|list|length }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Ожидающих платежей:</strong>
+                        {{ transactions|selectattr('status', 'equalto', 'payment_awaiting')|list|length }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- IP-логи пользователя -->
+    <div class="card bg-dark border-0 shadow-sm mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">IP-логи пользователя</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-sm admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>IP-адрес</th>
+                            <th>Тип активности</th>
+                            <th>Дата и время</th>
+                            <th>User-Agent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in ip_logs %}
+                        <tr>
+                            <td>{{ log.id }}</td>
+                            <td>{{ log.ip_address }}</td>
+                            <td>
+                                {% if log.activity_type == 'login' %}
+                                <span class="badge bg-primary">Вход</span>
+                                {% elif log.activity_type == 'register' %}
+                                <span class="badge bg-success">Регистрация</span>
+                                {% elif log.activity_type == 'deposit' %}
+                                <span class="badge bg-info">Депозит</span>
+                                {% elif log.activity_type == 'deposit_ton' %}
+                                <span class="badge bg-info">Депозит TON</span>
+                                {% elif log.activity_type == 'deposit_nowpayments' %}
+                                <span class="badge bg-info">Депозит NowPayments</span>
+                                {% elif log.activity_type == 'withdraw' %}
+                                <span class="badge bg-warning">Вывод</span>
+                                {% else %}
+                                <span class="badge bg-secondary">{{ log.activity_type }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ log.timestamp.strftime('%d.%m.%Y %H:%M:%S') }}</td>
+                            <td>
+                                <span class="small text-muted" style="font-size: 0.8em; max-width: 300px; display: block; overflow-x: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ log.user_agent }}">
+                                    {{ log.user_agent }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% if ip_logs|length == 0 %}
+                        <tr>
+                            <td colspan="5" class="text-center">Логи IP-адресов отсутствуют</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Транзакции пользователя -->
+    <div class="card bg-dark border-0 shadow-sm mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Транзакции пользователя</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-sm admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID транзакции</th>
+                            <th>Тип</th>
+                            <th>Сумма</th>
+                            <th>Статус</th>
+                            <th>Дата создания</th>
+                            <th>Срок</th>
+                            <th>Ожидаемая прибыль</th>
+                            <th>Дата выплаты</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ transaction.transaction_id }}</td>
+                            <td>
+                                <span class="badge {% if transaction.type == 'ton' %}bg-info{% else %}bg-secondary{% endif %}">
+                                    {{ transaction.source }}
+                                </span>
+                            </td>
+                            <td>{{ "%.2f"|format(transaction.amount) }} USDT</td>
+                            <td>
+                                {% if transaction.status == 'completed' %}
+                                <span class="badge bg-success">Завершена</span>
+                                {% elif transaction.status == 'pending' %}
+                                <span class="badge bg-secondary">Ожидает</span>
+                                {% elif transaction.status == 'payment_awaiting' %}
+                                <span class="badge bg-warning">Ожидает оплаты</span>
+                                {% elif transaction.status == 'failed' %}
+                                <span class="badge bg-danger">Ошибка</span>
+                                {% elif transaction.status == 'cancelled' %}
+                                <span class="badge bg-danger">Отменена</span>
+                                {% else %}
+                                <span class="badge bg-secondary">{{ transaction.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ transaction.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                            <td>
+                                {% if transaction.term_value is not none and transaction.term_unit is not none %}
+                                    {% if transaction.term_unit == 'minutes' %}
+                                    {{ transaction.term_value|int }} мин.
+                                    {% elif transaction.term_unit == 'weeks' %}
+                                    {{ transaction.term_value|int }} нед.
+                                    {% elif transaction.term_unit == 'months' %}
+                                    {{ transaction.term_value|int }} мес.
+                                    {% elif transaction.term_unit == 'years' %}
+                                    {{ transaction.term_value|int }} г.
+                                    {% else %}
+                                    {{ "%.2f"|format(transaction.term_months) }} мес.
+                                    {% endif %}
+                                {% else %}
+                                    {{ "%.2f"|format(transaction.term_months) if transaction.term_months else "—" }} мес.
+                                {% endif %}
+                            </td>
+                            <td>{{ "%.2f"|format(transaction.expected_profit) }} USDT</td>
+                            <td>
+                                {% if transaction.status == 'completed' %}
+                                    {% if transaction.payout_date %}
+                                    <span class="text-success">{{ transaction.payout_date.strftime('%d.%m.%Y') }}</span>
+                                    {% else %}
+                                    —
+                                    {% endif %}
+                                {% else %}
+                                —
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if transaction.type == 'regular' %}
+                                <a href="{{ url_for('admin_transaction_details', transaction_id=transaction.transaction_id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                {% else %}
+                                <a href="{{ url_for('admin_ton_transactions') }}" class="btn btn-sm btn-outline-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно подтверждения удаления пользователя -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title text-danger" id="deleteUserModalLabel">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Внимание!</strong> Это действие нельзя отменить.
+                </div>
+                <p>Вы действительно хотите удалить пользователя <strong>{{ user.username }}</strong> (ID: {{ user.id }})?</p>
+                <p>Будут безвозвратно удалены:</p>
+                <ul>
+                    <li>Учётная запись пользователя</li>
+                    <li>Все транзакции пользователя ({{ transactions|length }})</li>
+                    <li>История IP-адресов ({{ ip_logs|length }})</li>
+                    <li>Вся связанная с пользователем информация</li>
+                </ul>
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Рекомендуется сделать необходимые заметки о пользователе перед удалением.
+                </div>
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <form action="{{ url_for('admin_delete_user', user_id=user.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt me-2"></i> Удалить безвозвратно
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock admin_content %}

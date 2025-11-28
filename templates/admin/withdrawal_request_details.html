@@ -1,0 +1,292 @@
+{% extends "admin/base_admin.html" %}
+
+{% block admin_content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-2 text-gray-800">
+                <i class="fas fa-credit-card me-2"></i> Детали запроса на вывод #{{ request.id }}
+            </h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Панель управления</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin_withdrawal_requests') }}">Запросы на вывод</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Запрос #{{ request.id }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold">Информация о запросе</h6>
+                    <div>
+                        <span class="badge {% if request.status == 'pending' %}bg-warning{% elif request.status == 'approved' %}bg-info{% elif request.status == 'completed' %}bg-success{% elif request.status == 'rejected' %}bg-danger{% endif %} py-2 px-3">
+                            {% if request.status == 'pending' %}
+                                Ожидает обработки
+                            {% elif request.status == 'approved' %}
+                                Одобрен
+                            {% elif request.status == 'completed' %}
+                                Выполнен
+                            {% elif request.status == 'rejected' %}
+                                Отклонен
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Основная информация</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th>ID запроса:</th>
+                                    <td>{{ request.id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Пользователь:</th>
+                                    <td>
+                                        <a href="{{ url_for('admin_user_details', user_id=request.user_id) }}">
+                                            {{ request.user.username }}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Сумма:</th>
+                                    <td class="fw-bold">{{ request.amount }} USDT</td>
+                                </tr>
+                                <tr>
+                                    <th>Сеть:</th>
+                                    <td>{{ request.network }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Дата запроса:</th>
+                                    <td>{{ request.request_date.strftime('%d.%m.%Y %H:%M') }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Информация о статусе</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th>Текущий статус:</th>
+                                    <td>
+                                        <span class="badge {% if request.status == 'pending' %}bg-warning{% elif request.status == 'approved' %}bg-info{% elif request.status == 'completed' %}bg-success{% elif request.status == 'rejected' %}bg-danger{% endif %} py-2">
+                                            {% if request.status == 'pending' %}
+                                                Ожидает обработки
+                                            {% elif request.status == 'approved' %}
+                                                Одобрен
+                                            {% elif request.status == 'completed' %}
+                                                Выполнен
+                                            {% elif request.status == 'rejected' %}
+                                                Отклонен
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% if request.processed_date %}
+                                <tr>
+                                    <th>Дата обработки:</th>
+                                    <td>{{ request.processed_date.strftime('%d.%m.%Y %H:%M') }}</td>
+                                </tr>
+                                {% endif %}
+                                {% if request.tx_hash %}
+                                <tr>
+                                    <th>Хеш транзакции:</th>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control form-control-sm" value="{{ request.tx_hash }}" readonly>
+                                            <button class="btn btn-sm btn-outline-secondary copy-button" data-clipboard-text="{{ request.tx_hash }}">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <h5>Детали платежа</h5>
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="alert alert-light">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Адрес кошелька:</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" value="{{ request.wallet_address }}" readonly>
+                                        <button class="btn btn-outline-secondary copy-button" data-clipboard-text="{{ request.wallet_address }}">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                {% if request.memo %}
+                                <div class="mb-0">
+                                    <label class="form-label fw-bold">Комментарий пользователя:</label>
+                                    <p class="border p-2 rounded mb-0">{{ request.memo }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if request.admin_comment %}
+                    <h5>Комментарий администратора</h5>
+                    <div class="alert alert-info">
+                        {{ request.admin_comment }}
+                    </div>
+                    {% endif %}
+                    
+                    {% if request.status == 'pending' %}
+                    <form method="POST" action="{{ url_for('withdrawal_routes.admin_update_withdrawal_status', request_id=request.id) }}" class="mt-4">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="mb-3">
+                            <label for="adminComment" class="form-label">Комментарий администратора</label>
+                            <textarea class="form-control" id="adminComment" name="admin_comment" rows="3">{{ request.admin_comment }}</textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="submit" name="action" value="approve" class="btn btn-success w-100">
+                                    <i class="fas fa-check me-2"></i> Одобрить запрос
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="submit" name="action" value="reject" class="btn btn-danger w-100">
+                                    <i class="fas fa-times me-2"></i> Отклонить запрос
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    {% elif request.status == 'approved' %}
+                    <form method="POST" action="{{ url_for('withdrawal_routes.admin_update_withdrawal_status', request_id=request.id) }}" class="mt-4">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="mb-3">
+                            <label for="txHash" class="form-label">Хеш транзакции</label>
+                            <input type="text" class="form-control" id="txHash" name="tx_hash" value="{{ request.tx_hash or '' }}">
+                            <div class="form-text">Введите хеш транзакции после выполнения перевода</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="adminComment" class="form-label">Комментарий администратора</label>
+                            <textarea class="form-control" id="adminComment" name="admin_comment" rows="3">{{ request.admin_comment }}</textarea>
+                        </div>
+                        <button type="submit" name="action" value="complete" class="btn btn-success w-100">
+                            <i class="fas fa-check-double me-2"></i> Отметить как выполненный
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold">Информация о пользователе</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-2" style="width: 80px; height: 80px;">
+                            <i class="fas fa-user fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="mb-0">{{ request.user.username }}</h5>
+                        <p class="text-muted">{{ request.user.email }}</p>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>ID пользователя:</span>
+                            <span class="text-muted">{{ request.user.id }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Дата регистрации:</span>
+                            <span class="text-muted">{{ request.user.registered_on.strftime('%d.%m.%Y') }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Общий баланс:</span>
+                            <span class="fw-bold">{{ request.user.get_total_balance() }} USDT</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Ожидаемая прибыль:</span>
+                            <span class="text-success">{{ request.user.get_expected_profit() }} USDT</span>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('admin_user_details', user_id=request.user.id) }}" class="btn btn-primary w-100">
+                        <i class="fas fa-user me-2"></i> Подробнее о пользователе
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold">История запросов на вывод</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% set user_requests = request.user.withdrawal_requests|sort(attribute='request_date', reverse=True) %}
+                        {% if user_requests|length > 1 %}
+                            {% for wr in user_requests %}
+                                {% if wr.id != request.id %}
+                                    <a href="{{ url_for('withdrawal_routes.admin_withdrawal_request_details', request_id=wr.id) }}" class="list-group-item list-group-item-action">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">{{ wr.amount }} USDT</h6>
+                                            <small>
+                                                <span class="badge {% if wr.status == 'pending' %}bg-warning{% elif wr.status == 'approved' %}bg-info{% elif wr.status == 'completed' %}bg-success{% elif wr.status == 'rejected' %}bg-danger{% endif %}">
+                                                    {% if wr.status == 'pending' %}
+                                                        Ожидает
+                                                    {% elif wr.status == 'approved' %}
+                                                        Одобрен
+                                                    {% elif wr.status == 'completed' %}
+                                                        Выполнен
+                                                    {% elif wr.status == 'rejected' %}
+                                                        Отклонен
+                                                    {% endif %}
+                                                </span>
+                                            </small>
+                                        </div>
+                                        <small class="text-muted">{{ wr.request_date.strftime('%d.%m.%Y %H:%M') }}</small>
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <div class="list-group-item">
+                                <p class="text-muted mb-0">У пользователя нет других запросов на вывод</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock admin_content %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Инициализация кнопок копирования
+        new ClipboardJS('.copy-button');
+        
+        // Обработка нажатия на кнопку копирования
+        document.querySelectorAll('.copy-button').forEach(function(button) {
+            button.addEventListener('click', function() {
+                // Сохраняем исходную иконку
+                const originalHtml = this.innerHTML;
+                
+                // Меняем иконку на галочку
+                this.innerHTML = '<i class="fas fa-check"></i>';
+                
+                // Через 2 секунды возвращаем исходную иконку
+                setTimeout(() => {
+                    this.innerHTML = originalHtml;
+                }, 2000);
+            });
+        });
+    });
+</script>
+{% endblock admin_content %}

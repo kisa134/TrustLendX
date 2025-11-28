@@ -1,0 +1,69 @@
+    <!-- Плавающая кнопка поддержки -->
+    <div class="support-chat-button">
+        <a href="https://t.me/trustlendx" target="_blank" class="btn btn-primary rounded-circle shadow" title="Поддержка в Telegram">
+            <i class="fab fa-telegram"></i>
+        </a>
+        <span class="support-label">Поддержка</span>
+    </div>
+
+    <style>
+        .support-chat-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            transition: all 0.3s ease;
+        }
+        
+        .support-chat-button .btn {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+        }
+        
+        .support-chat-button .btn i {
+            font-size: 1.5rem;
+        }
+        
+        .support-label {
+            background: #343a40;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-right: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-weight: 500;
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .support-chat-button:hover .support-label {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* Адаптация для мобильных устройств */
+        @media (max-width: 767.98px) {
+            .support-chat-button {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .support-chat-button .btn {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .support-chat-button .btn i {
+                font-size: 1.3rem;
+            }
+        }
+    </style>

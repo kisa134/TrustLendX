@@ -1,0 +1,94 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Flask
+instance/
+.webassets-cache
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+# Backup files
+*.bak
+*.bak2
+*.bak3
+*.bak4
+*.bak5
+*.bak6
+*.backup
+*.old
+
+# Temporary files
+temp.txt
+cookie.txt
+lines.txt
+*.tmp
+
+# Test files
+test_*.py
+test_*.html
+
+# Attached assets (temporary)
+attached_assets/
+
+# Payment QR codes (generated dynamically)
+static/payment_qr/*.png
+
+# Replit specific
+.replit
+.replitignore
+replit.nix
+
+# UV lock file
+uv.lock
+
+# Git
+.git/

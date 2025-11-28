@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Админ-панель TrustLendX</title>
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    <style>
+        .admin-sidebar {
+            min-height: calc(100vh - 56px);
+            background-color: var(--bs-dark-bg-subtle);
+        }
+        .admin-content {
+            padding: 20px;
+        }
+        .sidebar-nav .nav-link {
+            color: var(--bs-light);
+            border-radius: 0;
+        }
+        .sidebar-nav .nav-link:hover {
+            background-color: var(--bs-dark);
+        }
+        .sidebar-nav .nav-link.active {
+            background-color: var(--bs-primary);
+            color: white;
+        }
+        .admin-card {
+            border-left: 4px solid var(--bs-primary);
+        }
+        .admin-table thead {
+            background-color: var(--bs-dark-bg-subtle);
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхняя навигационная панель -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('admin_dashboard') }}">
+                <img src="{{ url_for('static', filename='img/logo-new.png') }}" alt="TrustLendX Logo" style="height: 30px; margin-right: 10px;">TrustLendX Админ
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="adminNavbar">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}" target="_blank">
+                            <i class="fas fa-external-link-alt me-1"></i> Перейти на сайт
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">
+                            <i class="fas fa-sign-out-alt me-1"></i> Выйти
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Боковая панель -->
+            <div class="col-md-3 col-lg-2 p-0 admin-sidebar">
+                <div class="sidebar-nav nav flex-column py-3">
+                    <a class="nav-link {% if request.path == url_for('admin_dashboard') %}active{% endif %}" 
+                       href="{{ url_for('admin_dashboard') }}">
+                        <i class="fas fa-tachometer-alt me-2"></i> Панель управления
+                    </a>
+                    <a class="nav-link {% if '/admin/users' in request.path %}active{% endif %}" 
+                       href="{{ url_for('admin_users') }}">
+                        <i class="fas fa-users me-2"></i> Пользователи
+                    </a>
+                    <a class="nav-link {% if '/admin/transactions' in request.path and '/admin/ton-transactions' not in request.path %}active{% endif %}" 
+                       href="{{ url_for('admin_transactions') }}">
+                        <i class="fas fa-money-bill-wave me-2"></i> Все транзакции
+                    </a>
+                    <a class="nav-link {% if '/admin/ton-transactions' in request.path %}active{% endif %}" 
+                       href="{{ url_for('admin_ton_transactions') }}">
+                        <i class="fas fa-coins me-2"></i> TON транзакции
+                    </a>
+                    <a class="nav-link {% if '/admin/withdrawal-requests' in request.path %}active{% endif %}" 
+                       href="{{ url_for('withdrawal_routes.admin_withdrawal_requests') }}">
+                        <i class="fas fa-credit-card me-2"></i> Запросы на вывод
+                    </a>
+                    <a class="nav-link {% if '/admin/notifications' in request.path %}active{% endif %}" 
+                       href="{{ url_for('admin_notifications') }}">
+                        <i class="fas fa-bell me-2"></i> Уведомления
+                        {% if unread_count and unread_count > 0 %}
+                            <span class="badge bg-danger rounded-pill ms-1">{{ unread_count }}</span>
+                        {% endif %}
+                    </a>
+                    <a class="nav-link {% if '/admin/messages' in request.path %}active{% endif %}" 
+                       href="{{ url_for('admin_messages') }}">
+                        <i class="fas fa-envelope me-2"></i> Сообщения
+                        {% if unread_count and unread_count > 0 %}
+                            <span class="badge bg-danger rounded-pill ms-1">{{ unread_count }}</span>
+                        {% endif %}
+                    </a>
+                    <a class="nav-link {% if '/admin/referrals' in request.path %}active{% endif %}" 
+                       href="{{ url_for('referral_admin.admin_referrals') }}">
+                        <i class="fas fa-users-cog me-2"></i> Рефералы
+                    </a>
+                    <hr class="text-light">
+                    <h6 class="text-light ps-3 text-uppercase fw-light fs-6">Безопасность</h6>
+                    <a class="nav-link {% if '/admin/aml-settings' in request.path %}active{% endif %}" 
+                       href="{{ url_for('admin_aml_settings') }}">
+                        <i class="fas fa-shield-alt me-2"></i> Настройки AML
+                    </a>
+                    <a class="nav-link {% if '/admin/change-password' in request.path %}active{% endif %}" 
+                       href="{{ url_for('admin_change_password') }}">
+                        <i class="fas fa-key me-2"></i> Сменить пароль
+                    </a>
+                    <!-- Убрано из-за отсутствия соответствующих обработчиков
+                    <a class="nav-link {% if '/admin/nowpayments-settings' in request.path %}active{% endif %}" 
+                       href="#">
+                        <i class="fas fa-money-check-alt me-2"></i> Настройки NOWPayments
+                    </a>
+                    <a class="nav-link {% if '/admin/ipn-test' in request.path %}active{% endif %}" 
+                       href="#">
+                        <i class="fas fa-exchange-alt me-2"></i> Тест IPN-уведомлений
+                    </a>
+                    -->
+                    <hr class="text-light">
+                    <h6 class="text-light ps-3 text-uppercase fw-light fs-6">Система</h6>
+                    <a class="nav-link" href="{{ url_for('dashboard') }}">
+                        <i class="fas fa-user me-2"></i> Панель инвестора
+                    </a>
+                    <a class="nav-link" href="{{ url_for('logout') }}">
+                        <i class="fas fa-sign-out-alt me-2"></i> Выйти
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Основной контент -->
+            <main class="col-md-9 col-lg-10 ms-sm-auto admin-content">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                {% block admin_content %}{% endblock admin_content %}
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock scripts %}
+</body>
+</html>

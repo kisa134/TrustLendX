@@ -1,0 +1,790 @@
+/* Custom CSS for TrustLendX Investment Platform */
+
+:root {
+    /* Основная цветовая палитра */
+    --trustlendx-dark-blue: #1a2740;
+    --trustlendx-blue: #0056b3;
+    --trustlendx-teal: #17a2b8;
+    --trustlendx-gold: #ffc107;
+    --trustlendx-green: #28a745;
+    
+    /* Переопределение bootstrap переменных */
+    --bs-primary: var(--trustlendx-blue);
+    --bs-primary-rgb: 0, 86, 179;
+    --bs-info: var(--trustlendx-teal);
+    --bs-success: var(--trustlendx-green);
+    --bs-warning: var(--trustlendx-gold);
+}
+
+/* Типографика */
+body {
+    font-family: 'Inter', 'Montserrat', system-ui, -apple-system, sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+h1, h2, h3, .navbar-brand {
+    font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+}
+
+h1 {
+    font-size: 2.25rem;
+}
+
+h2 {
+    font-size: 1.75rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+h4 {
+    font-size: 1.25rem;
+}
+
+h5 {
+    font-size: 1.125rem;
+}
+
+/* Основные размеры */
+.p-0 { padding: 0 !important; }
+.p-1 { padding: 0.25rem !important; }
+.p-2 { padding: 0.5rem !important; }
+.p-3 { padding: 1rem !important; }
+.p-4 { padding: 1.5rem !important; }
+.p-5 { padding: 3rem !important; }
+
+.m-0 { margin: 0 !important; }
+.m-1 { margin: 0.25rem !important; }
+.m-2 { margin: 0.5rem !important; }
+.m-3 { margin: 1rem !important; }
+.m-4 { margin: 1.5rem !important; }
+.m-5 { margin: 3rem !important; }
+
+.section-heading {
+    margin-bottom: 2rem;
+    position: relative;
+    font-weight: 700;
+}
+
+.section-heading::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(to right, var(--trustlendx-blue), var(--trustlendx-teal));
+    margin-top: 15px;
+    border-radius: 2px;
+}
+
+/* Спецэффекты */
+.text-gradient {
+    background: linear-gradient(to right, var(--trustlendx-blue), var(--trustlendx-teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+.section-divider {
+    height: 2px;
+    background: linear-gradient(to right, rgba(0,0,0,0), var(--bs-primary), rgba(0,0,0,0));
+    margin: 3rem 0;
+}
+
+/* Кнопки */
+.btn {
+    border-radius: 5px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.btn-lg {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.7rem;
+    font-size: 0.8rem;
+}
+
+.btn-primary {
+    background: linear-gradient(to right, var(--trustlendx-blue), var(--trustlendx-teal));
+    border: none;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 4px 15px rgba(0, 86, 179, 0.2);
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, var(--trustlendx-teal), var(--trustlendx-blue));
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.3s ease;
+    border-radius: 5px;
+}
+
+.btn-primary:hover::before {
+    opacity: 1;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 86, 179, 0.3);
+}
+
+.btn-outline-primary {
+    border-color: var(--trustlendx-blue);
+    color: var(--trustlendx-blue);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--trustlendx-blue);
+    border-color: var(--trustlendx-blue);
+    transform: translateY(-2px);
+}
+
+/* Элементы дашборда */
+.balance-card {
+    transition: all 0.3s ease;
+    border-radius: 10px;
+    border-top: 4px solid var(--bs-primary);
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.balance-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-list {
+    max-height: 500px;
+    overflow-y: auto;
+    border-radius: 10px;
+}
+
+.transaction-list th {
+    border-top: none;
+}
+
+/* Индикаторы статуса */
+.status-pending {
+    color: var(--bs-warning);
+}
+
+.status-completed {
+    color: var(--bs-success);
+}
+
+.status-failed {
+    color: var(--bs-danger);
+}
+
+/* Hero секция */
+.hero-section {
+    padding: 4rem 0;
+    background: linear-gradient(135deg, var(--trustlendx-dark-blue) 0%, #2c3e50 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+    opacity: 0.5;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Блоки с фичами */
+.feature-box {
+    padding: 2.5rem;
+    border-radius: 10px;
+    transition: all 0.4s ease;
+    height: 100%;
+    background: linear-gradient(145deg, rgba(26, 39, 64, 0.1), rgba(26, 39, 64, 0.2));
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+}
+
+.feature-box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(45deg, var(--trustlendx-blue), var(--trustlendx-teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+/* FAQ аккордеон */
+.accordion-button:not(.collapsed) {
+    background: linear-gradient(to right, var(--trustlendx-blue), var(--trustlendx-teal));
+    color: white;
+}
+
+.accordion-button:focus {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+
+/* Кнопка копирования в FAQ */
+.faq-content {
+    padding-right: 40px;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+    transform: scale(1.1);
+    background-color: var(--trustlendx-blue);
+    color: white;
+}
+
+.copy-btn i {
+    font-size: 14px;
+}
+}
+
+/* Кнопка копирования в FAQ */
+.faq-content {
+    padding-right: 40px;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+    transform: scale(1.1);
+    background-color: var(--trustlendx-blue);
+    color: white;
+}
+
+.copy-btn i {
+    font-size: 14px;
+}
+
+/* Калькулятор прибыли */
+.calculator-form {
+    background: linear-gradient(145deg, rgba(26, 39, 64, 0.1), rgba(26, 39, 64, 0.2));
+    border-radius: 15px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+}
+
+.form-control, .form-select {
+    background-color: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 5px;
+    padding: 0.75rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: rgba(0, 0, 0, 0.15);
+    border-color: var(--trustlendx-blue);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Карточки/карты */
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: linear-gradient(145deg, rgba(26, 39, 64, 0.1), rgba(26, 39, 64, 0.2));
+    backdrop-filter: blur(10px);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Медиа запросы */
+@media (max-width: 768px) {
+    /* Добавляем отступ сверху для учета фиксированного навбара */
+    body {
+        padding-top: 56px;
+    }
+    
+    /* Маленький экран - адаптируем заголовок */
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .lead {
+        font-size: 1rem;
+    }
+    
+    .hero-section {
+        padding: 1.5rem 0;
+    }
+    
+    .feature-box {
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+    }
+    
+    .calculator-form {
+        padding: 1.5rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .stat-number {
+        font-size: 1.75rem;
+    }
+    
+    .section-heading {
+        font-size: 1.5rem;
+    }
+    
+    h1.display-5 {
+        font-size: 1.8rem;
+    }
+    
+    .row {
+        margin-right: 0;
+        margin-left: 0;
+    }
+    
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+    
+    /* Адаптивные таблицы */
+    .table-responsive {
+        font-size: 0.8rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table-responsive table {
+        min-width: 650px; /* Минимальная ширина для скролла */
+    }
+    
+    /* Высота таблиц на мобильных */
+    .transaction-list {
+        max-height: 300px;
+    }
+    
+    /* Аккордеон для мобильных вместо таблиц */
+    .mobile-accordion .card {
+        margin-bottom: 0.5rem;
+    }
+    
+    .mobile-accordion .card-header {
+        padding: 0.75rem;
+        cursor: pointer;
+    }
+    
+    .mobile-accordion .card-body {
+        padding: 0.75rem;
+    }
+    
+    .mobile-accordion .mobile-accordion-row {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 0.5rem 0;
+    }
+    
+    .mobile-accordion .mobile-accordion-row:last-child {
+        border-bottom: none;
+    }
+    
+    .mobile-accordion .mobile-accordion-label {
+        font-weight: 500;
+        opacity: 0.7;
+    }
+    
+    .balance-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .input-group > .form-control {
+        width: 100%;
+    }
+    
+    /* Кнопки должны быть минимум 44x44px для удобного тача */
+    .btn {
+        padding: 0.7rem 1rem;
+        font-size: 0.9rem;
+        min-height: 44px;
+        min-width: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Горизонтальное расположение кнопок */
+    .flex-wrap .btn {
+        margin-right: 0.3rem;
+        margin-left: 0.3rem;
+    }
+    
+    /* Навигационные элементы и интерактивные компоненты - минимум 44px */
+    .nav-link, 
+    .form-control,
+    .form-select,
+    .input-group-text,
+    .accordion-button {
+        min-height: 44px;
+    }
+    
+    /* Нижняя навигация для мобильных */
+    .mobile-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(26, 39, 64, 0.95);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+        padding: 0.5rem 0;
+    }
+    
+    .mobile-nav-item {
+        text-align: center;
+        padding: 0.5rem;
+    }
+    
+    .mobile-nav-item i {
+        font-size: 1.2rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .mobile-nav-label {
+        font-size: 0.7rem;
+        margin-top: 0.25rem;
+        display: block;
+    }
+}
+
+/* Навбар */
+.navbar {
+    padding: 0.5rem 0;
+    background: rgba(26, 39, 64, 0.95) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+}
+
+/* Стили для жестовой навигации */
+.swipe-feedback {
+    animation: pulse 0.5s ease-out;
+    box-shadow: 0 0 15px rgba(var(--bs-primary-rgb), 0.6);
+}
+
+.swipe-indicator {
+    animation: slideUp 0.3s ease-out;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Футер */
+footer {
+    background: linear-gradient(to right, var(--trustlendx-dark-blue), #2c3e50) !important;
+}
+
+/* Прогресс-бар лимита депозитов */
+.deposit-limit {
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(26, 39, 64, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.progress-bar {
+  height: 20px;
+  background: #e9ecef;
+  border-radius: 10px;
+  margin: 10px 0;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+/* Активное состояние при нажатии на прогресс-бар */
+.progress-bar.active-touch {
+  transform: scale(1.02);
+  box-shadow: 0 0 10px rgba(var(--trustlendx-blue-rgb), 0.5);
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--trustlendx-green);
+  background: linear-gradient(to right, var(--trustlendx-blue), var(--trustlendx-green));
+  width: 0%;
+  transition: width 0.5s ease;
+}
+
+.progress-percent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  font-weight: bold;
+  font-size: 0.85rem;
+  text-shadow: 0 0 3px rgba(0,0,0,0.7);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Стиль для тултипа прогресс-бара */
+.progress-tooltip {
+  animation: fadeInDown 0.3s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) translateX(-50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateX(-50%);
+  }
+}
+
+/* Мобильная версия прогресс-бара */
+@media (max-width: 576px) {
+  .progress-bar {
+    height: 24px; /* Увеличиваем высоту для удобства на мобильных */
+    margin: 8px 0;
+  }
+  
+  .progress-percent {
+    font-size: 0.75rem;
+    font-weight: 800; /* Делаем шрифт жирнее для лучшей видимости */
+    text-shadow: 0 0 4px rgba(0,0,0,0.9); /* Усиливаем тень для лучшей читаемости */
+  }
+  
+  .deposit-limit {
+    padding: 0 10px; /* Добавляем отступы для лучшего отображения на маленьких экранах */
+  }
+}
+
+.limit-stats {
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Класс для градиентного текста */
+.text-gradient-primary {
+    background: linear-gradient(to right, var(--trustlendx-blue), var(--trustlendx-teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-gold {
+    background: linear-gradient(to right, #f9d423, #e65c00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Кастомные бейджи */
+.badge-gradient {
+    background: linear-gradient(to right, var(--trustlendx-blue), var(--trustlendx-teal));
+    color: white;
+    border: none;
+}
+
+/* Выделенные цифры (статистика) */
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Модальное окно */
+.modal-content {
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(26, 39, 64, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Адаптивные стили для мобильных устройств */
+@media (max-width: 768px) {
+    /* Общие стили для мобильных устройств */
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .section-heading {
+        font-size: 1.6rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .lead {
+        font-size: 1rem;
+    }
+
+    /* Улучшения для счетчиков статистики */
+    .card-title.small {
+        font-size: 0.8rem;
+    }
+    
+    .card-text.h6 {
+        font-size: 1rem;
+    }
+    
+    /* Улучшения для таблицы транзакций */
+    .table th, .table td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Стили для инвестиционного калькулятора */
+    .calculator-form {
+        padding: 1rem;
+    }
+    
+    .calculator-form h4 {
+        font-size: 1.2rem;
+    }
+    
+    /* Улучшенные стили для карточек */
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    /* Мобильная версия для аккордеона транзакций */
+    .mobile-accordion-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .mobile-accordion-label {
+        font-weight: bold;
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .mobile-accordion-value {
+        text-align: right;
+    }
+}
+
+/* Супер малые мобильные устройства */
+@media (max-width: 375px) {
+    .btn {
+        padding: 0.4rem 0.7rem;
+        font-size: 0.8rem;
+    }
+    
+    .progress-bar {
+        height: 22px;
+    }
+    
+    .progress-percent {
+        font-size: 0.7rem;
+    }
+    
+    .limit-stats {
+        font-size: 0.85rem;
+    }
+}
