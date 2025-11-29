@@ -1,0 +1,38 @@
+# 🔐 ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ ДЛЯ RENDER.COM
+# Скопируйте и вставьте в Render Environment Variables
+
+# ========== ОБЯЗАТЕЛЬНЫЕ ==========
+
+# Flask Secret Key (для сессий и CSRF)
+SECRET_KEY=7f3a8b2c9d1e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a
+
+# Flask Environment
+FLASK_ENV=production
+FLASK_DEBUG=0
+
+# Database URL (получите от Render PostgreSQL)
+# DATABASE_URL=postgresql://user:password@host:5432/dbname
+# ⚠️ ЭТО ЗАПОЛНИТЕ ПОСЛЕ СОЗДАНИЯ БАЗЫ ДАННЫХ!
+
+# ========== ДЛЯ ТЕСТИРОВАНИЯ (можно оставить пустыми) ==========
+
+# TON Blockchain (опционально для теста)
+TON_API_KEY=test_key_placeholder
+TON_WALLET_ADDRESS=test_wallet_placeholder
+
+# Telegram Bot (опционально для теста)
+TELEGRAM_TOKEN=test_token_placeholder
+TELEGRAM_CHAT_ID=test_chat_id_placeholder
+
+# NOWPayments (опционально для теста)
+NOWPAYMENTS_API_KEY=test_nowpayments_placeholder
+
+# Email Service (опционально для теста)
+SENDGRID_API_KEY=test_sendgrid_placeholder
+SENDINBLUE_API_KEY=test_sendinblue_placeholder
+
+# ========== POSTGRES НАСТРОЙКИ ==========
+PGPORT=5432
+PGUSER=trustlendx_user
+PGDATABASE=trustlendx_db
+# PGHOST и PGPASSWORD получите от Render PostgreSQL
